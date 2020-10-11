@@ -553,7 +553,7 @@
       $.ajax({
           type: "POST",
           url: "/experiment-data",
-          data: JSON.stringify(jsPsych.data.getData()),
+          data: JSON.stringify(jsPsych.data.get()),
           contentType: "application/json"
         })
         .done(function() {

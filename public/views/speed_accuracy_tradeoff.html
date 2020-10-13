@@ -14,6 +14,7 @@
 </head>
   <script>
     const fixation_duration = 500;
+    const subjectID = 0;
 
   //fixation
   var fixation = {
@@ -22,7 +23,6 @@
     choices: jsPsych.NO_KEYS,
     trial_duration: fixation_duration,
   };
-
 
   var timeline = [];
 
@@ -34,9 +34,12 @@
     <p>In one instance, you will be asked to respond as quickly as possible. In another instance, you will be asked to respond as accurately as possible.</p>
     <p>When the text appears, press <b>F</b> if the stimulus is a word and <b>J</b> if the stimulus is not a word. </p> 
     <p>Press the space bar to continue.</p>`,
-    choices: ['space']
-  }
-  timeline.push(instr1)
+    choices: ['space'],
+    on_finish: function(data){
+      data.subject_id = subjectID;
+    }
+  };
+  //timeline.push(instr1);
 
   var instr2 = {
     type: 'html-keyboard-response',
@@ -45,7 +48,7 @@
     <p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin the practice round.<p>`,
     choices: ['space']
   }
-  timeline.push(instr2)
+  //timeline.push(instr2)
 
   var mask_err_slow = {
     type: 'html-keyboard-response',
@@ -133,10 +136,7 @@
         }
       }
     ]
-  }
-
-
-
+  };
 
   var testNonWordStimuli2 = [
     {word: 'mutic', word_validity: 'invalid', word_frequency: 'undefined'},
@@ -172,9 +172,7 @@
         }
       }
     ]
-  }
-
-
+  };
 
   var testNonWordStimuli3 = [
     {word: 'ajake', word_validity: 'invalid', word_frequency: 'undefined'},
@@ -210,21 +208,8 @@
         }
       }
     ]
-  }
-
-
-
-
-
-
-
-
-
-
-
-  timeline.push(testNonWord)
-
-
+  };
+ // timeline.push(testNonWord)
 
   var conditional1_slow = {
     timeline: [mask_err_slow, testNonWord2],
@@ -236,8 +221,8 @@
           return false;
         } 
       }
-  }
-  timeline.push(conditional1_slow)
+  };
+  //timeline.push(conditional1_slow)
 
   var conditional1_fast = {
     timeline: [mask_err_fast, testNonWord2],
@@ -249,8 +234,8 @@
         return false;
       } 
     }
-  }
-  timeline.push(conditional1_fast)
+  };
+  //timeline.push(conditional1_fast)
 
   var conditional1_acc = {
       timeline: [mask_err_acc, testNonWord2],
@@ -262,8 +247,8 @@
           return false;
         } 
       }
-  }
-  timeline.push(conditional1_acc)
+  };
+ // timeline.push(conditional1_acc)
 
   var conditional2_slow = {
       timeline: [mask_err_slow, testNonWord3],
@@ -275,8 +260,8 @@
           return false;
         } 
       }
-  }
-  timeline.push(conditional2_slow)
+  };
+  //timeline.push(conditional2_slow)
     
   var conditional2_fast = {
       timeline: [mask_err_fast, testNonWord3],
@@ -289,8 +274,7 @@
         } 
       }
   }
-  timeline.push(conditional2_fast)
-    
+  //timeline.push(conditional2_fast)
   var conditional2_acc = {
         timeline: [mask_err_acc, testNonWord3],
         conditional_function: function(){
@@ -302,7 +286,7 @@
           } 
         }
   }
-  timeline.push(conditional2_acc)
+  //timeline.push(conditional2_acc)
 
   var conditional3_slow = {
       timeline: [mask_err_last_slow],
@@ -314,9 +298,9 @@
           return false;
         } 
       }
-  }
-  timeline.push(conditional3_slow)
-    
+  };
+ // timeline.push(conditional3_slow)
+
   var conditional3_fast = {
       timeline: [mask_err_last_fast],
       conditional_function: function(){
@@ -327,8 +311,8 @@
           return false;
         } 
       }
-  }
-  timeline.push(conditional3_fast)
+  };
+  //timeline.push(conditional3_fast)
     
   var conditional3_acc = {
       timeline: [mask_err_last_acc],
@@ -341,7 +325,7 @@
       } 
       }
   }
-  timeline.push(conditional3_acc)
+ // timeline.push(conditional3_acc)
 
   var practiceEnd ={
     type: 'html-keyboard-response',
@@ -351,7 +335,7 @@
     <p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin to task.</p>`,
     choices: ['space']
   }
-  timeline.push(practiceEnd)
+  //timeline.push(practiceEnd)
 
   var randomNum = Math.random;
   if(randomNum>.75){
@@ -404,10 +388,6 @@
       {word: 'hitpo', word_validity: 'invalid', word_frequency: undefined},
     ];
   }
-
-
-
-
   else{
     var stimuliSpeed = [
       {word: 'candy', word_validity: 'valid', word_frequency: 'high'},
@@ -423,12 +403,6 @@
       {word: 'perkn', word_validity: 'invalid', word_frequency: undefined},
     ];
   }
-
-
-
-
-
-
   //Main Task
   var instructionsSpeed = {
     type: 'html-keyboard-response',
@@ -436,22 +410,8 @@
     choices: ['space']
   }
 
-  var random = Math.random()
+  var random = Math.random();
   //console.log(random)
-
-  if(random > .5){
-    timeline.push(instructionsSpeed);
-  }
-
-
-  /* 
-  * Word Length: 5
-  * Emotional Arousal: 5-10
-  * Emotional Dominance: 5-10
-  * Number of Syllables: 2
-  */
-
-
 
   var trialsSpeed = {
     timeline_variables: stimuliSpeed,
@@ -485,20 +445,15 @@
         }
       }
     ]
-  }
-
-  if(random > .5){
-    timeline.push(trialsSpeed);
-  }
-
-
+  };
 
   var instructionsAccuracy = {
     type: 'html-keyboard-response',
     stimulus: '<p>Press F if the text is a word, press J if the text is not a word. Respond as <strong> accurately </strong> as possible. <br> When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin the experiment. </br> </p>',
     choices: ['space']
-  }
-  timeline.push(instructionsAccuracy);
+  };
+
+  //timeline.push(instructionsAccuracy);
 
   var trialsAccuracy = {
     timeline_variables: stimuliAccuracy,
@@ -532,20 +487,31 @@
         }
       }
     ]
-  }
-  timeline.push(trialsAccuracy);
-
-  if(random < .5){
-    timeline.push(instructionsSpeed)
-    timeline.push(trialsSpeed)
   };
+
+  if(random > .5){
+    firstInstruct = instructionsSpeed;
+    firstTrials = trialsSpeed;
+    secondInstruct = instructionsAccuracy;
+    secondTrials = trialsAccuracy;
+  } else {
+    firstInstruct = instructionsAccuracy;
+    firstTrials = trialsAccuracy;
+    secondInstruct = instructionsSpeed;
+    secondTrials = trialsSpeed;
+  };
+ // timeline.push(trialsAccuracy);
 
   var end = {
     type: "html-keyboard-response",
-    stimulus: '<p>You have completed the task. Press any key to exit.</p>'
+    stimulus: '<p>You have completed the task. Press any key to continue.</p>'
   };
-  timeline.push(end);
-
+  //timeline.push(end);
+  var SAT_timeline = {
+    timeline: [instr1,instr2,testNonWord,conditional1_slow,conditional1_fast,conditional1_acc,conditional2_slow,conditional2_fast, conditional2_acc,conditional3_slow,conditional3_fast,conditional3_acc,practiceEnd,firstInstruct,firstTrials,secondInstruct, 
+      secondTrials,end]
+  };
+  timeline.push(SAT_timeline);
   jsPsych.init({
     timeline: timeline,
     on_finish: function() {

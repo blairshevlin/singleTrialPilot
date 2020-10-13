@@ -1,21 +1,40 @@
 // --- LOADING MODULES
-var express = require('express'),
-    body_parser = require('body-parser'),
-    mongoose = require('mongoose');
+const express = require('express');
+const body_parser = require('body-parser');
+const fetch = require("node-fetch");
+//    mongoose = require('mongoose');
+const Dropbox = require("dropbox").Dropbox;
+
 
 // --- INSTANTIATE THE APP
 var app = express();
+const subjects = {};
+const starttime = Date.now();
 
-// --- MONGOOSE SETUP
-mongoose.connect(process.env.CONNECTION || 'mongodb://localhost/jspsychDemo'); 
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error'));
-db.once('open', function callback() {
-    console.log('database opened');
+// --- Database SETUP
+const dbx = new Dropbox({
+    accessToken: '8c0D8eGcBXIAAAAAAAAAAZ3gffPTRT8AAlcdCv_n24igGD0V7JYsSL0DCNM9pIet',
+    fetch
 });
 
-var emptySchema = new mongoose.Schema({}, { strict: false });
-var Entry = mongoose.model('Entry', emptySchema);
+saveDropbox = function (content, filename) {
+    return dbx.filesUpload({
+        path: "/" + filename,
+        contents: content,
+        autorename: false,
+        mode:  'overwrite'
+    });
+};
+
+//mongoose.connect(process.env.CONNECTION || 'mongodb://localhost/jspsychDemo'); 
+//var db = mongoose.connection;
+//db.on('error', console.error.bind(console, 'connection error'));
+//db.once('open', function callback() {
+//    console.log('database opened');
+//});
+
+//var emptySchema = new mongoose.Schema({}, { strict: false });
+//var Entry = mongoose.model('Entry', emptySchema);
 
 // --- STATIC MIDDLEWARE 
 app.use(express.static(__dirname + '/public'));
@@ -26,6 +45,7 @@ app.use(body_parser.json()); // to support JSON-encoded bodies
 
 // --- VIEW LOCATION, SET UP SERVING STATIC HTML
 app.set('views', __dirname + '/public/views');
+app.set('img', __dirname + '/public/img');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
@@ -35,19 +55,23 @@ app.get('/', function(request, response) {
 });
 
 app.get('/Pilot_Lot_Lex', function(request, response) {
-    response.render('speed_accuracy_tradeoff.html');
+    //response.render('speed_accuracy_tradeoff.html');
+    // response.render('Lott.html');
+    response.render('Lott_SAT.html');
 });
 
 app.get('/finish', function(request, response) {
     response.render('finish.html');
 })
 
-app.post('/experiment-data', function(request, response){
-    Entry.create({
-        "data":request.body
-    });    
-    response.end();
-})
+app.post("/experiment-data", function (request, response) {
+    subject_id = request.body.subject_id;
+    status = request.body.status;
+    subjects[subject_id] = status;
+    saveDropbox(JSON.stringify(subjects), `subject_data_${starttime}.json`)
+    .then(() => console.log(`subjuct status recorded: ${subject_id},${status}`))
+    .catch(err => console.log(err));
+});
 
 // --- START THE SERVER 
 var server = app.listen(process.env.PORT || 3000, function(){

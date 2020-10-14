@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lottery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="jsPsych//jspsych.js"></script>
+    <script src="jsPsych/jspsych-html-keyboard-response.js"></script>
+    <script src="jsPsych/jspsych-image-keyboard-response.js"></script>
+    <script src="jsPsych/jspsych-xab.js"></script>
+    <script src="jsPsych/jspsych-econ-choice.js"></script>
+    <script src="jsPsych/jspsych-fullscreen.js"></script>
+    <script src="jsPsych/jspsych-combinations.js"></script>
+    <link rel="stylesheet" type="text/css" href="jsPsych/css/jspsych.css"></link>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <canvas id="myChart" width='100' height='100'></canvas>
+</head>
+
+<body>
+</body>
+<script>
+
+    //TESTING ?
+    var testing = false;
+    // CREATE TIMELINE
+    var timeline = [];
+
+    // FULLSCREEN
+    var fullscreen = {
+        type: 'fullscreen',
+        fullscreen_mode: true
+    };
+    timeline.push(fullscreen);
+
+    // WELCOME MESSAGE
+
+    var welcome = {
+        type: "html-keyboard-response",
+        stimulus: "Welcome to the study. Press the spacebar to begin.",
+        choices: [32]
+    };
+    if(testing==false){
+        timeline.push(welcome);
+    };
+
+    // Fixation
+
+    var fixation = {
+        type: 'html-keyboard-response',
+        stimulus: '<div style="font-size:60px;">+</div>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 250,
+    };
+
+    // Pick a random key from an object (Not used now, may be useful)
+    var randomProperty = function (obj) {
+        var keys = Object.keys(obj);
+        return obj[keys[keys.length * Math.random() << 0]];
+    };
+
+    // LOTTERY STIMULUS FILES
+
+    var lowA_lottery_imgs = [];
+    for (var i = 1; i <= 10; i++) {
+        if (i === 1 || i == 9 || i == 10) {
+            continue;
+        };
+        lowA_lottery_imgs.push('img/LowA' + i * 10 + 'percent.jpg');
+    };
+
+    var lowB_lottery_imgs = [];
+    for (var i = 1; i <= 10; i++) {
+        if (i === 1 || i == 9 || i == 10) {
+            continue;
+        };
+        lowB_lottery_imgs.push('img/LowB' + i * 10 + 'percent.jpg');
+    };
+
+    var low_lott_pairs = [];
+    for (j = 0; j < lowA_lottery_imgs.length - 1; j++) {
+        var a = lowA_lottery_imgs;
+        var b = lowB_lottery_imgs;
+        var c = low_lott_pairs;
+        if (Math.random() < 0.5) {
+            c.push([
+                {
+                    stim: a[j],
+                    lab: "A"
+                },
+                {
+                    stim: b[j],
+                    lab: "B"
+                }])
+        } else {
+            c.push([
+                {
+                    stim: b[j],
+                    lab: "B"
+                },
+                {
+                    stim: a[j],
+                    lab: "A"
+                }])
+        }
+    };
+
+    var highA_lottery_imgs = [];
+    for (var i = 1; i <= 10; i++) {
+        if (i === 1 || i == 9 || i == 10) {
+            continue;
+        };
+        highA_lottery_imgs.push('img/HighA' + i * 10 + 'percent.jpg');
+    };
+    var highB_lottery_imgs = [];
+    for (var i = 1; i <= 10; i++) {
+        if (i === 1 || i == 9 || i == 10) {
+            continue;
+        };
+        highB_lottery_imgs.push('img/HighB' + i * 10 + 'percent.jpg');
+    };
+
+    var high_lott_pairs = [];
+    for (j = 0; j < highA_lottery_imgs.length - 1; j++) {
+        var a = highA_lottery_imgs;
+        var b = highB_lottery_imgs;
+        var c = high_lott_pairs;
+        if (Math.random() < 0.5) {
+            c.push([
+                {
+                    stim: a[j],
+                    lab: "A"
+                },
+                {
+                    stim: b[j],
+                    lab: "B"
+                }])
+        } else {
+            c.push([
+                {
+                    stim: b[j],
+                    lab: "B"
+                },
+                {
+                    stim: a[j],
+                    lab: "A"
+                }])
+        }
+    };
+    var lowEV_pairs = [];
+    if (Math.random() < 0.5) {
+        lowEV_pairs.push([
+            {
+                stim: "img/1.60lowGam.jpg",
+                lab: "gamble"
+            },
+            {
+                stim: "img/1.60lowSure.jpg",
+                lab: "sure"
+            }
+        ])
+    } else {
+        lowEV_pairs.push([
+            {
+                stim: "img/1.60lowSure.jpg",
+                lab: "sure"
+            },
+            {
+                stim: "img/1.60lowGam.jpg",
+                lab: "gamble"
+            }
+        ])
+    };
+    if (Math.random() < 0.5) {
+        lowEV_pairs.push([
+            {
+                stim: "img/2.00lowGam.jpg",
+                lab: "gamble"
+            },
+            {
+                stim: "img/2.00lowSure.jpg",
+                lab: "sure"
+            }
+        ])
+    } else {
+        lowEV_pairs.push([
+            {
+                stim: "img/2.00lowSure.jpg",
+                lab: "sure"
+            },
+            {
+                stim: "img/2.00lowGam.jpg",
+                lab: "gamble"
+            }
+        ])
+    };
+    var highEV_pairs = [];
+    if (Math.random() < 0.5) {
+        highEV_pairs.push([
+            {
+                stim: "img/1.60highGam.jpg",
+                lab: "gamble"
+            },
+            {
+                stim: "img/1.60highSure.jpg",
+                lab: "sure"
+            }
+        ])
+    } else {
+        highEV_pairs.push([
+            {
+                stim: "img/1.60highSure.jpg",
+                lab: "sure"
+            },
+            {
+                stim: "img/1.60highGam.jpg",
+                lab: "gamble"
+            }
+        ])
+    };
+    if (Math.random() < 0.5) {
+        highEV_pairs.push([
+            {
+                stim: "img/2.00highGam.jpg",
+                lab: "gamble"
+            },
+            {
+                stim: "img/2.00highSure.jpg",
+                lab: "sure"
+            }
+        ])
+    } else {
+        highEV_pairs.push([
+            {
+                stim: "img/2.00highSure.jpg",
+                lab: "sure"
+            },
+            {
+                stim: "img/2.00highGam.jpg",
+                lab: "gamble"
+            }
+        ])
+    };
+
+    //LOTTERY INSTRUCTIONS AND PRACTICE SCREENS
+
+    var lotInstructions0 = {
+        type: "html-keyboard-response",
+        stimulus: "<p><b>Gambling Task</b></p>" +
+            "<p>This task will involve monetary decisions using a point system. Any outcomes " +
+            "of the task will be in points, which will then be converted to USD ($) once the study " +
+            "ends. The conversion rate from task points to USD is:</p>" +
+            "<p><b>1 Point = $0.XX</b></p>" +
+            "<p>Press the spacebar to continue.</p>",
+        //post_trial_gap: 2000,
+        choices: [32]
+    };
+    // timeline.push(lotInstructions0);
+
+    var lotInstructions1 = {
+        type: "html-keyboard-response",
+        stimulus: "<p>In this task, you will make decisions between pairs of gambles over 8 rounds. " +
+            "Four of these gambles will be used to determine your reward at the end of the " +
+            "study. You will be told which four gambles are real. One of the real gambles " +
+            "will be chosen at random and played out at the end of the study, and your " +
+            "reward will be determined based on that gamble's outcome.</p>" +
+            "<p>The four other gambles are hypothetical: they will not impact your reward.</p>" +
+            "<p>Press the spacebar to continue.</p>",
+        //post_trial_gap: 2000,
+        choices: [32]
+    };
+    //timeline.push(lotInstructions1);
+
+    var lotInstructions2 = {
+        type: "html-keyboard-response",
+        stimulus: "<p>In some rounds, one of the gambles will be a completely filled-in pie " +
+            "graph with one number displayed in the center of the pie. The outcome of these " +
+            "gambles is that point value with 100% probability.</p>" +
+            "<p>Press the spacebar to continue.</p>",
+        //post_trial_gap: 2000,
+        choices: [32]
+    };
+    //  timeline.push(lotInstructions2);
+
+
+    var lotInstructions3 = {
+        type: "html-keyboard-response",
+        stimulus: "<p>You will now see an example round. First, a cross will be displayed in the " +
+            "center of the screen. Next, two gambles will be shown on the screen, and you will " +
+            "select which gamble you would prefer to play.</p><p>Use the <b>F</b> key to choose the " +
+            "gamble on the left and the <b>J</b> key to choose the gamble on the right.</p>" +
+            "<p>The potential outcomes of each gamble are shown in text, and the probability of each " +
+            "outcome is represented by the area of the pie that is filled in.</p>" +
+            "<p>Press the spacebar to continue.</p>",
+        choices: [32]
+    };
+    //  timeline.push(lotInstructions3);
+
+
+    var lotExample = {
+        timeline: [
+            {
+                type: "html-keyboard-response",
+                stimulus: "<p>In this example, both gambles have a 30% chance for the larger reward " +
+                    "and a 70% chance for the smaller reward.</p><p>In this round, you are free to choose either the left (<b>F</b>) or right (<b>J</b>) option.</p>" +
+                    "<p>Note that in the actual rounds, you will <b>NOT</b> be told the probability of each " +
+                    "outcome. You must use the relative sizes of the filled in areas of the pie to make your choice.</p>" +
+                    "<p>Rest your fingers on the F and J keys, and press the spacebar to begin the example round.</p>",
+                choices: [32]
+            },
+            fixation,
+            {
+                type: "econ-choice",
+                stimulus: [high_lott_pairs[1][0].stim, high_lott_pairs[1][1].stim],
+                choices: ["F", "J"]
+            }
+        ]
+    };
+    //   timeline.push(lotExample);
+
+    var lotInstructions4 = {
+        type: "html-keyboard-response",
+        stimulus: "<p>You will now complete a practice round to ensure that you understand " +
+            "how the gambles work. In this round, we want you to choose the " +
+            "gamble that has a chance to win the largest possible outcome on the screen. " +
+            "Be sure to take in the information in each gamble, but try to respond within " +
+            "5.5 seconds. We will let you know if your response was too fast or too slow.</p>" +
+            "Rest your fingers on the F and J keys, and press the spacebar to begin.</p>",
+        choices: [32]
+    };
+    //timeline.push(lotInstructions4);
+
+    var lotPractice1 = {
+        type: "econ-choice",
+        stimulus: [low_lott_pairs[0][0].stim, low_lott_pairs[0][1].stim],
+        choices: ["F", "J"]
+    };
+    //timeline.push(fixation, lotPractice1);
+
+    var lotPractice2 = {
+        type: 'econ-choice',
+        stimulus: [high_lott_pairs[0][0].stim, high_lott_pairs[0][1].stim],
+        choices: ["F", "J"]
+    };
+
+    var lotPractice3 = {
+        type: "econ-choice",
+        stimulus: [low_lott_pairs[1][0].stim, low_lott_pairs[1][1].stim],
+        choices: ["F", "J"]
+    }
+
+    var lot_err_slow = {
+        type: 'html-keyboard-response',
+        stimulus: "<p>Whoops! You responded too slowly. Let's try that again. " +
+            "Try to respond in less than 5.5 seconds. Remember, choose the gamble that could reward the largest possible outcome on the screen.</p>" +
+            "<p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin the practice round.</p>",
+        choices: [32]
+    };
+
+    var lot_err_fast = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Whoops! You responded too quickly. Let's try that again. " +
+            "Make sure you take in the information before making a response. Remember, choose the choose the gamble that could reward the largest possible outcome on the screen.</p>" +
+            "<p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin the practice round.</p>",
+        chocies: [32]
+    };
+
+    var lot_err_slow_last = {
+        type: "html-keyboard-response",
+        stimulus: `<p>Your response was too slow. For the actual task, please try to respond more quickly.</p>
+            <p>Press the space bar to continue.</p>`,
+        choices: [32]
+    };
+
+    var lot_err_fast_last = {
+        type: "html-keyboard-response",
+        stimulus: `<p>Your response was too fast. For the actual task, please try to take in the information before making a response.</p>
+            <p>Press the space bar to continue.</p>`,
+        choices: [32]
+    };
+
+    var lot_err_acc = {
+        type: "html-keyboard-response",
+        stimulus: "<p>Whoops! Let's try that again. Remember, we want you to choose the choose the gamble that could reward the largest possible outcome on the screen</p>" +
+            "<p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin the practice round.</p>",
+        choices: [32]
+    };
+
+    var lot_err_acc_last = {
+        type: 'html-keyboard-response',
+        stimulus: "<p>You failed to choose the correct gamble. Remember, the chance that an outcome will occur " +
+            "corresponds to the amount of the pie that is filled in.</p>" +
+            "<p>Press the space bar to continue.</p>",
+        choices: [32]
+    };
+
+    // LOTTERY CONDITIONAL STATEMENTS FOR PRACTICE
+
+    var lot_cond_fast = {
+        timeline: [lot_err_fast, fixation, lotPractice2],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (data.rt >= 500) {
+                window.fast1 = false;
+                return false;
+            } else {
+                window.fast1 = true;
+                return true;
+            }
+        }
+    };
+    //  timeline.push(lot_cond_fast);
+
+    var lot_cond_slow = {
+        timeline: [lot_err_slow, fixation, lotPractice2],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (data.rt <= 5500 || fast1 == true) {
+                window.slow1 = false;
+                return false;
+            } else {
+                window.slow1 = true;
+                return true;
+            }
+        }
+    };
+    //  timeline.push(lot_cond_slow);
+
+    var lot_cond_incorrect = {
+        timeline: [lot_err_acc, fixation, lotPractice2],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f') && fast1 != true && slow1 != true) {
+                window.acc = false;
+                return true;
+            } else {
+                window.acc = true;
+                return false;
+            }
+        }
+    };
+    // timeline.push(lot_cond_incorrect);
+
+    var lot_cond2_slow = {
+        timeline: [lot_err_slow, fixation, lotPractice3],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (data.rt <= 5500) {
+                window.slow2 = false;
+                return false;
+            } else {
+                window.slow2 = true;
+                return true;
+            }
+        }
+    };
+    //  timeline.push(lot_cond2_slow);
+
+    var lot_cond2_fast = {
+        timeline: [lot_err_fast, fixation, lotPractice3],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (data.rt >= 500 || slow2 == true) {
+                window.fast2 = false;
+                return false;
+            } else {
+                window.fast2 = true;
+                return true;
+            }
+        }
+    };
+    //  timeline.push(lot_cond2_fast);
+
+    var lot_cond2_incorrect = {
+        timeline: [lot_err_acc, fixation, lotPractice3],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (acc == false && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f') && fast2 != true && slow2 != true) {
+                window.acc2 = false;
+                return true;
+            } else {
+                window.acc2 = true;
+                return false;
+            }
+        }
+    };
+    //    timeline.push(lot_cond2_incorrect);
+
+    var lot_cond3_slow = {
+        timeline: [lot_err_slow_last],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (data.rt <= 5500) {
+                window.slow3 = false;
+                return false;
+            } else {
+                window.slow3 = true;
+                return true;
+            }
+        }
+    };
+    //   timeline.push(lot_cond3_slow);
+
+    var lot_cond3_fast = {
+        timeline: [lot_err_fast_last],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (data.rt >= 500 || slow3 == true) {
+                window.fast3 = false;
+                return false;
+            } else {
+                window.fast3 = true;
+                return true;
+            }
+        }
+    };
+    //  timeline.push(lot_cond3_fast);
+
+    var lot_cond3_incorrect = {
+        timeline: [lot_err_acc_last],
+        conditional_function: function () {
+            var data = jsPsych.data.get().last(1).values()[0];
+            if (acc2 == false && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f') && fast3 != true && slow3 != true) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
+    //  timeline.push(lot_cond3_incorrect);
+
+
+    var practiceEnd = {
+        type: 'html-keyboard-response',
+        stimulus: `<p>You have completed the practice section. You will now begin the main task. </p>
+            <p>Remember to keep your fingers on the <b>F</b> and <b>J</b> keys before you begin each round.<p>
+            <p>Press the space bar to begin the task.</p>`,
+        choices: ['space']
+    };
+    //   timeline.push(practiceEnd);
+
+    // LOTTERY PRACTICE TIMELINE
+    var lot_practice_timeline = {
+        timeline: [lotInstructions0, lotInstructions1, lotInstructions2, lotInstructions3, lotExample, lotInstructions4, fixation, lotPractice1, lot_cond_fast, lot_cond_slow,
+            lot_cond_incorrect, lot_cond2_slow, lot_cond2_fast, lot_cond2_incorrect, lot_cond3_slow, lot_cond3_fast, lot_cond3_incorrect, practiceEnd]
+    };
+
+
+    // LOTTERY REAL/HYPOTHETICAL INSTRUCTIONS
+
+    var lotRealInstruc =
+        "<p>The following round will use <strong>REAL</strong> gambles, " +
+        "which means that the gamble you choose could be used at the " +
+        "end of the study to determine your reward.</p>" +
+        "<p>Rest your fingers on the F and J keys, and press the spacebar to continue.</p>";
+
+    var lotHypInstruc =
+        "<p>The following round will use <strong>HYPOTHETICAL</strong> gambles, " +
+        "which means that the gamble you choose will <strong>NOT</strong> be used at the " +
+        "end of the study to determine your reward.</p>" +
+        "<p>Rest your fingers on the F and J keys, and press the spacebar to continue.</p>";
+
+    // COUNTER BALANCING
+
+    var lotCounterBal = Math.random();
+    //var lot_dic_CounterBal = .7; //TESTING DIC
+
+    // LOTTERY PROCEDURES
+
+    var lottery_procedure1 = {
+        timeline: [
+            {
+                type: "html-keyboard-response",
+                stimulus: jsPsych.timelineVariable('instruc'),
+                choices: [32]
+            },
+            fixation,
+            {
+                type: "econ-choice",
+                stimulus: jsPsych.timelineVariable('choice'),
+                choices: ["F", "J"],
+                on_finish: (data) => {
+                    data.task = "gamble";
+                    data.cond = jsPsych.timelineVariable('mag', true);
+                    data.twoLott = jsPsych.timelineVariable('twoLott', true);
+                    data.isReal = jsPsych.timelineVariable('isReal', true);
+                    data.perc = jsPsych.timelineVariable('perc', true);
+                    data.base = jsPsych.timelineVariable('base', true);
+                    data.leftLab = jsPsych.timelineVariable('leftLab', true);
+                }
+            }
+        ],
+        timeline_variables: [
+            { instruc: lotRealInstruc, choice: [low_lott_pairs[4][0].stim, low_lott_pairs[4][1].stim], leftLab: low_lott_pairs[4][0].lab, mag: "low", twoLott: true, isReal: true, perc: 60, base: NaN },
+            { instruc: lotRealInstruc, choice: [high_lott_pairs[4][0].stim, high_lott_pairs[4][1].stim], leftLab: high_lott_pairs[4][0].lab, mag: "high", twoLott: true, isReal: true, perc: 60, base: NaN },
+            { instruc: lotRealInstruc, choice: [lowEV_pairs[0][0].stim, lowEV_pairs[0][1].stim], leftLab: lowEV_pairs[0][0].lab, mag: "low", twoLott: false, isReal: true, perc: NaN, base: 1.6 },
+            { instruc: lotRealInstruc, choice: [highEV_pairs[0][0].stim, highEV_pairs[0][1].stim], leftLab: highEV_pairs[0][0].lab, mag: "high", twoLott: false, isReal: true, perc: NaN, base: 1.6 },
+            { instruc: lotHypInstruc, choice: [low_lott_pairs[5][0].stim, low_lott_pairs[5][1].stim], leftLab: low_lott_pairs[5][0].lab, mag: "low", twoLott: true, isReal: false, perc: 70, base: NaN },
+            { instruc: lotHypInstruc, choice: [high_lott_pairs[5][0].stim, high_lott_pairs[5][1].stim], leftLab: high_lott_pairs[5][0].lab, mag: "high", twoLott: true, isReal: false, perc: 70, base: NaN },
+            { instruc: lotHypInstruc, choice: [lowEV_pairs[1][0].stim, lowEV_pairs[1][1].stim], leftLab: lowEV_pairs[1][0].lab, mag: "low", twoLott: false, isReal: false, perc: NaN, base: 2 },
+            { instruc: lotHypInstruc, choice: [highEV_pairs[1][0].stim, highEV_pairs[1][1].stim], leftLab: highEV_pairs[1][0].lab, mag: "high", twoLott: false, isReal: false, perc: NaN, base: 2 }
+        ],
+        randomize_order: true,
+        conditional_function: function () {
+            if (lotCounterBal < 0.5) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
+    //timeline.push(lottery_procedure1);
+
+
+    var lottery_procedure2 = {
+        timeline: [
+            {
+                type: "html-keyboard-response",
+                stimulus: jsPsych.timelineVariable('instruc'),
+                choices: [32]
+            },
+            fixation,
+            {
+                type: "econ-choice",
+                stimulus: jsPsych.timelineVariable('choice'),
+                choices: ["F", "J"],
+                on_finish: (data) => {
+                    data.task = "gamble";
+                    data.cond = jsPsych.timelineVariable('mag', true);
+                    data.twoLott = jsPsych.timelineVariable('twoLott', true);
+                    data.isReal = jsPsych.timelineVariable('isReal', true);
+                    data.perc = jsPsych.timelineVariable('perc', true);
+                    data.base = jsPsych.timelineVariable('base', true);
+                    data.leftLab = jsPsych.timelineVariable('leftLab', true);
+                    data.rightLab = NaN;
+                }
+            }
+        ],
+        timeline_variables: [
+            { instruc: lotHypInstruc, choice: [low_lott_pairs[4][0].stim, low_lott_pairs[4][1].stim], leftLab: low_lott_pairs[4][0].lab, mag: "low", twoLott: true, isReal: false, perc: 60, base: NaN },
+            { instruc: lotHypInstruc, choice: [high_lott_pairs[4][0].stim, high_lott_pairs[4][1].stim], leftLab: high_lott_pairs[4][0].lab, mag: "high", twoLott: true, isReal: false, perc: 60, base: NaN },
+            { instruc: lotHypInstruc, choice: [lowEV_pairs[0][0].stim, lowEV_pairs[0][1].stim], leftLab: lowEV_pairs[0][0].lab, mag: "low", twoLott: false, isReal: false, perc: NaN, base: 1.6 },
+            { instruc: lotHypInstruc, choice: [highEV_pairs[0][0].stim, highEV_pairs[0][1].stim], leftLab: highEV_pairs[0][0].lab, mag: "high", twoLott: false, isReal: false, perc: NaN, base: 1.6 },
+            { instruc: lotRealInstruc, choice: [low_lott_pairs[5][0].stim, low_lott_pairs[5][1].stim], leftLab: low_lott_pairs[5][0].lab, mag: "low", twoLott: true, isReal: true, perc: 70, base: NaN },
+            { instruc: lotRealInstruc, choice: [high_lott_pairs[5][0].stim, high_lott_pairs[5][1].stim], leftLab: high_lott_pairs[5][0].lab, mag: "high", twoLott: true, isReal: true, perc: 70, base: NaN },
+            { instruc: lotRealInstruc, choice: [lowEV_pairs[1][0].stim, lowEV_pairs[1][1].stim], leftLab: lowEV_pairs[1][0].lab, mag: "low", twoLott: false, isReal: true, perc: NaN, base: 2 },
+            { instruc: lotRealInstruc, choice: [highEV_pairs[1][0].stim, highEV_pairs[1][1].stim], leftLab: highEV_pairs[1][0].lab, mag: "high", twoLott: false, isReal: true, perc: NaN, base: 2 }
+        ],
+        randomize_order: true,
+        conditional_function: function () {
+            if (lotCounterBal >= 0.5) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
+    //timeline.push(lottery_procedure2); 
+
+    var endTask = {
+        type: 'html-keyboard-response',
+        stimulus: "<p>You have completed this task. Press the spacebar to proceed to the next task.</p>",
+        choices: [32]
+    };
+
+    //LOTTERY TIMELINE
+    var lott_timeline_full = {
+        timeline: [lot_practice_timeline, lottery_procedure1, lottery_procedure2, endTask]};
+    if(testing==false){
+        timeline.push(lott_timeline_full);
+    };
+
+    // REWARDS/OUTCOMES
+
+    var endAll = {
+        type: "html-keyboard-response",
+        on_start: function (data) {
+            rewardData = jsPsych.data.get().filter({ trial_type: 'econ-choice', isReal: true, task: "gamble" }).values();
+            window.rewardObj = jsPsych.randomization.sampleWithoutReplacement(rewardData, 1)[0];
+            if (rewardObj.key_press === 70) {
+                window.choseLeft = true;
+                window.rewardStim = rewardObj.stimulus[0];
+            } else {
+                window.choseLeft = false;
+                window.rewardStim = rewardObj.stimulus[1];
+            };
+        },
+        stimulus: "<p>You have completed all the tasks. Press the spacebar to see your reward, based on a " +
+            "randomly selected <b>REAL</b> round.</p>",
+        choices: [32]
+    };
+    if(testing==false){
+        timeline.push(endAll);
+    };
+    // timeline.push(endAll);
+
+
+    var lotRewardScreen1 = {
+        type: "html-keyboard-response",
+        on_load: function dispStim() {
+            document.getElementById('img').src = rewardStim;
+        },
+        stimulus: "<p>The following gamble that you chose during the study was chosen randomly to determine your reward:</p>" +
+            "<div style = 'float: center;'>" +
+            "<img id = 'img' style = 'width: 350px; height: 350px;'></img></div>" +
+            "<p>Press the spacebar to see the payoffs from this choice.</p>",
+        choices: [32]
+    };
+
+    var lotRewardScreen2 = {
+        type: "html-keyboard-response",
+        on_start: function (data) {
+            if (rewardObj.twoLott == true) {
+                if (rewardObj.mag == "high") {
+                    if (choseLeft == true) {
+                        if (rewardObj.leftLab == "A") { //High A X%
+                            perc = rewardObj.perc;
+                            if (Math.floor(Math.random() * 100) < perc) {
+                                window.rewardVal = 32;
+                            } else {
+                                window.rewardVal = 40;
+                            }
+                        } else { //High B X%
+                            if (Math.floor(Math.random() * 100) < perc) {
+                                window.rewardVal = 2;
+                            } else {
+                                window.rewardVal = 77;
+                            }
+                        }
+                    } else { //This means they chose right option => switch outcomes from above
+                        if (rewardObj.leftLab == "B") { //High A X% again 
+                            perc = rewardObj.perc;
+                            if (Math.floor(Math.random() * 100) < perc) {
+                                window.rewardVal = 32;
+                            } else {
+                                window.rewardVal = 40;
+                            }
+                        } else { //High B X% again
+                            if (Math.floor(Math.random() * 100) < perc) {
+                                window.rewardVal = 2;
+                            } else {
+                                window.rewardVal = 77;
+                            }
+                        }
+                    }
+                } else { //This means mag == "low"
+                    if (choseLeft == true) {
+                        if (rewardObj.leftLab == "A") { //Low A X%
+                            perc = rewardObj.perc;
+                            if (Math.floor(Math.random() * 100) < perc) {
+                                window.rewardVal = 1.60;
+                            } else {
+                                window.rewardVal = 2;
+                            }
+                        } else { //Low B X%
+                            if (Math.floor(Math.random() * 100) < perc) {
+                                window.rewardVal = 0.10;
+                            } else {
+                                window.rewardVal = 3.85;
+                            }
+                        }
+                    } else { //This means they chose right option => switch outcomes from above
+                        if (rewardObj.leftLab == "B") { //Low A X% again 
+                            perc = rewardObj.perc;
+                            if (Math.floor(Math.random() * 100) < perc) {
+                                window.rewardVal = 1.60;
+                            } else {
+                                window.rewardVal = 2;
+                            }
+                        } else { //Low B X% again
+                            if (Math.floor(Math.random() * 100) < perc) {
+                                window.rewardVal = 0.10;
+                            } else {
+                                window.rewardVal = 3.85;
+                            }
+                        }
+                    }
+                }
+            } else { //This means (twoLott == false) => this is an EV gamble
+                if (rewardObj.mag == "high") {
+                    if (rewardObj.base == 1.6) {
+                        if (choseLeft == true) {
+                            if (rewardObj.leftLab == "gamble") {
+                                if (Math.floor(Math.random()) < 50) {
+                                    window.rewardVal = 0;
+                                } else {
+                                    window.rewardVal = 32;
+                                }
+                            } else { //This means leftLab is sure thing and they chose left
+                                window.rewardVal = 9.51;
+                            }
+                        } else { //This means choseLeft == false => switch outcomes
+                            if (rewardObj.leftLab == "sure") {
+                                if (Math.floor(Math.random()) < 50) {
+                                    window.rewardVal = 0;
+                                } else {
+                                    window.rewardVal = 32;
+                                }
+                            } else { //This means leftLab is sure thing and they chose right
+                                window.rewardVal = 9.51;
+                            }
+                        }
+                    } else { //This means base == 2
+                        if (choseLeft == true) {
+                            if (rewardObj.leftLab == "gamble") {
+                                if (Math.floor(Math.random()) < 50) {
+                                    window.rewardVal = 0;
+                                } else {
+                                    window.rewardVal = 40;
+                                }
+                            } else { //This means leftLab is sure thing and they chose left
+                                window.rewardVal = 11.50;
+                            }
+                        } else { //This means choseLeft == false => switch outcomes
+                            if (rewardObj.leftLab == "sure") {
+                                if (Math.floor(Math.random()) < 50) {
+                                    window.rewardVal = 0;
+                                } else {
+                                    window.rewardVal = 40;
+                                }
+                            } else { //This means leftLab is sure thing and they chose right
+                                window.rewardVal = 11.50;
+                            }
+                        }
+                    }
+                } else { //This means (mag == "low")
+                    if (rewardObj.base == 1.6) {
+                        if (choseLeft == true) {
+                            if (rewardObj.leftLab == "gamble") {
+                                if (Math.floor(Math.random()) < 50) {
+                                    window.rewardVal = 0;
+                                } else {
+                                    window.rewardVal = 1.60;
+                                }
+                            } else { //This means leftLab is sure thing and they chose left
+                                window.rewardVal = 0.75;
+                            }
+                        } else { //This means choseLeft == false => switch outcomes
+                            if (rewardObj.leftLab == "sure") {
+                                if (Math.floor(Math.random()) < 50) {
+                                    window.rewardVal = 0;
+                                } else {
+                                    window.rewardVal = 1.60;
+                                }
+                            } else { //This means leftLab is sure thing and they chose right
+                                window.rewardVal = 0.75;
+                            }
+                        }
+                    } else { //This means base == 2
+                        if (choseLeft == true) {
+                            if (rewardObj.leftLab == "gamble") {
+                                if (Math.floor(Math.random()) < 50) {
+                                    window.rewardVal = 0;
+                                } else {
+                                    window.rewardVal = 2;
+                                }
+                            } else { //This means leftLab is sure thing and they chose left
+                                window.rewardVal = 0.90;
+                            }
+                        } else { //This means choseLeft == false => switch outcomes
+                            if (rewardObj.leftLab == "sure") {
+                                if (Math.floor(Math.random()) < 50) {
+                                    window.rewardVal = 0;
+                                } else {
+                                    window.rewardVal = 2;
+                                }
+                            } else { //This means leftLab is sure thing and they chose right
+                                window.rewardVal = 0.90;
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        stimulus: "<p>You earned the following amount of points from playing the gamble shown on the previous screen:</p>" +
+            "<div id = 'reward' style = 'float: center;'></div>" +
+            "<p>Press the spacebar to continue.</p>",
+        choices: [32],
+        on_load: function dispReward() {
+            rewardValString = rewardVal.toString();
+            document.getElementById('reward').textContent += rewardValString;
+        }
+    };
+
+    var lotRewardScreens = {
+        timeline: [lotRewardScreen1, lotRewardScreen2],
+        conditional_function: function () {
+            if (rewardObj.task == "gamble") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    if(testing==false){
+        timeline.push(lotRewardScreens);
+    };
+    // timeline.push(lotRewardScreens);
+
+    var end = {
+        type: "html-keyboard-response",
+        stimulus: "<p>You have completed the task. Press any key to exit.</p>"
+    };
+    timeline.push(end);
+
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function () {
+            jsPsych.data.displayData('csv');
+            //jsPsych.data.get().localSave('csv', 'mydata.csv');
+            //saveData("experiment_data", jsPsych.data.get().csv()); 
+            // code to define the experiment structure would go here...
+        }
+    });
+
+</script>
+
+</html>

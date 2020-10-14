@@ -69,10 +69,10 @@ jsPsych.plugins["econ-choice"] = (function () {
 
     
       new_html += '<div class="container-multi-choice">';
-      new_html += '<div class="container-multi-choice-column" id= "multiattribute-choices-stimulus-left" style ="position:fixed; TOP:50%; LEFT:35%; transform: translate(-50%, -50%); line-height: 0" >';
+      new_html += '<div class="container-multi-choice-column" id= "multiattribute-choices-stimulus-left" style ="position:fixed; TOP:50%; LEFT:25%; transform: translate(-50%, -50%); line-height: 0" >';
       new_html += `<div id="multiattribute-choices-stimulus-left" ><img style = "HEIGHT:300px; WIDTH:300px" src="${trial.stimulus[0]}"/></div>`;
       new_html += '</div>';
-      new_html += '<div class="container-multi-choice-column" id= "multiattribute-choices-stimulus-right" style="position:fixed; TOP:50%; LEFT:65%; transform: translate(-50%, -50%); line-height: 0">';
+      new_html += '<div class="container-multi-choice-column" id= "multiattribute-choices-stimulus-right" style="position:fixed; TOP:50%; LEFT:75%; transform: translate(-50%, -50%); line-height: 0">';
       new_html += `<div id="multiattribute-choices-stimulus-right" ><img style = "HEIGHT:300px; WIDTH:300px" src="${trial.stimulus[1]}"/ ></div>`;
       new_html += '</div>';
       new_html += '<div id="binary-timeoutinfo"></div>';
@@ -84,10 +84,10 @@ jsPsych.plugins["econ-choice"] = (function () {
       var selected;
       if (String.fromCharCode(response.key) == trial.choices[0]) {
         selected = '#multiattribute-choices-stimulus-left';
-        $(selected).css('border', `18px solid ${selected_color}`);
+        $(selected).css('border', `12px solid ${selected_color}`);
       } else {
         selected = '#multiattribute-choices-stimulus-right';
-        $(selected).css('border', `18px solid ${selected_color}`);
+        $(selected).css('border', `12px solid ${selected_color}`);
       }
       //$(selected).css('border', `12px solid ${selected_color}`);
     };

@@ -23,7 +23,7 @@ saveDropbox = function (content, filename) {
         contents: content,
         autorename: false,
         mode:  'overwrite'
-    });
+   });
 };
 
 //mongoose.connect(process.env.CONNECTION || 'mongodb://localhost/jspsychDemo'); 
@@ -65,12 +65,10 @@ app.get('/finish', function(request, response) {
 })
 
 app.post("/experiment-data", function (request, response) {
-    subject_id = request.body.subject_id;
-    status = request.body.status;
-    subjects[subject_id] = status;
-    saveDropbox(JSON.stringify(subjects), `subject_data_${starttime}.json`)
-    .then(() => console.log(`subjuct status recorded: ${subject_id},${status}`))
-    .catch(err => console.log(err));
+    data = request.body;
+    subject_id = data[0].subject;
+    subject_id = subject_id.replace(/'/g, "");
+    saveDropbox(JSON.stringify(data), `subject_data_${subject_id}.json`).catch(err => console.log(err));
 });
 
 // --- START THE SERVER 

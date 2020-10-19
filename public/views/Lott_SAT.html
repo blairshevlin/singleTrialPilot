@@ -30,6 +30,8 @@
     var timeline = [];
     //Subject ID
     var subject_id = jsPsych.randomization.randomID(7);
+    //Turk Info
+    var turkInfo = jsPsych.turk.turkInfo();
 
     // FULLSCREEN
     var fullscreen = {
@@ -1409,7 +1411,10 @@
         on_finish: function () {
             jsPsych.data.addProperties({
                 subject: subject_id,
-                reward: rewardValString
+                reward: rewardValString,
+                workerID: turkInfo.workerId,
+                assignmentIdD: turkInfo.assignmentId,
+                hitID: turkInfo.hitId
             });
         $.ajax({
           type: "POST",
@@ -1418,7 +1423,7 @@
           contentType: "application/json"
         })
         .done(function() {
-          window.location = "/finish";
+          window.location.href = "finish";
         })
         .fail(function() {
           alert("A problem occurred while writing to the database. Please contact the researcher for more information.")

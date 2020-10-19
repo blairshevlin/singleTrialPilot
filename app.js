@@ -2,6 +2,7 @@
 const express = require('express');
 const body_parser = require('body-parser');
 const fetch = require("node-fetch");
+const { response } = require('express');
 //    mongoose = require('mongoose');
 const Dropbox = require("dropbox").Dropbox;
 
@@ -25,16 +26,6 @@ saveDropbox = function (content, filename) {
         mode:  'overwrite'
    });
 };
-
-//mongoose.connect(process.env.CONNECTION || 'mongodb://localhost/jspsychDemo'); 
-//var db = mongoose.connection;
-//db.on('error', console.error.bind(console, 'connection error'));
-//db.once('open', function callback() {
-//    console.log('database opened');
-//});
-
-//var emptySchema = new mongoose.Schema({}, { strict: false });
-//var Entry = mongoose.model('Entry', emptySchema);
 
 // --- STATIC MIDDLEWARE 
 app.use(express.static(__dirname + '/public'));

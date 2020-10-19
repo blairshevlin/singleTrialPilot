@@ -893,7 +893,7 @@
     timeline: [mask_err_fast, testNonWord2],
     conditional_function: function(){
       var data = jsPsych.data.get().last(1).values()[0];
-      if(data.rt <= 500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+      if(data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
         return true;
       } else{
         return false;
@@ -932,7 +932,7 @@
       timeline: [mask_err_fast, testNonWord3],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
-        if(data.rt <= 500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+        if(data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
           return true;
         } else{
           return false;
@@ -973,7 +973,7 @@
       timeline: [mask_err_last_fast],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
-        if(data.rt <= 500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+        if(data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
             jsPsych.data.addProperties({
                 flag: 'SATFail_Fast'
             });
@@ -1381,6 +1381,7 @@
             choices: [32],
             on_load: function dispReward() {
                 rewardValString = rewardVal.toString();
+                var giveFlag = 'PAY';
                 document.getElementById('reward').textContent += rewardValString;
             }
         };
@@ -1404,6 +1405,7 @@
     };
         timeline.push(endNoReward);
         rewardValString = 0;
+        var giveFlag = '';
     };
 
     jsPsych.init({
@@ -1414,25 +1416,20 @@
                 reward: rewardValString,
                 workerID: turkInfo.workerId,
                 assignmentIdD: turkInfo.assignmentId,
-                hitID: turkInfo.hitId
+                hitID: turkInfo.hitId,
+                giveFlag: giveFlag
             });
         $.ajax({
           type: "POST",
           url: "/experiment-data",
           data: JSON.stringify(jsPsych.data.get().values()),
-          contentType: "application/json"
-        })
-        .done(function() {
-          window.location.href = "finish";
+          contentType: "application/json",
+          success: window.location.href = "finish"
         })
         .fail(function() {
           alert("A problem occurred while writing to the database. Please contact the researcher for more information.")
           window.location.href = "/";
         });
-            //jsPsych.data.displayData('csv');
-            //jsPsych.data.get().localSave('csv', 'mydata.csv');
-            //saveData("experiment_data", jsPsych.data.get().csv()); 
-            // code to define the experiment structure would go here...
         }
     });
 

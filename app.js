@@ -59,7 +59,8 @@ app.post("/experiment-data", function (request, response) {
     data = request.body;
     subject_id = data[0].subject;
     subject_id = subject_id.replace(/'/g, "");
-    saveDropbox(JSON.stringify(data), `subject_data_${subject_id}.json`).catch(err => console.log(err));
+    bonus_flag = data[0].giveFlag.replace(/'/g, "");
+    saveDropbox(JSON.stringify(data), `subject_data_${subject_id}_${bonus_flag}.json`).catch(err => console.log(err));
 });
 
 // --- START THE SERVER 

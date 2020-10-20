@@ -1,0 +1,22 @@
+<!doctype HTML>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="jsPsych//jspsych.js"></script>
+        <link href="jsPsych/css/jspsych.css" type="text/css" rel="stylesheet"></link>
+    </head>
+    <body>
+        <p>You have completed the experiment. Enter the code you were given:</p>
+        <input type="text" id="code"></input>
+        <button onclick="sendData(); window.location = 'finish';">Submit HIT</button>
+
+        <script>
+            function sendData() {
+            jsPsych.turk.submitToTurk({
+                code: document.getElementById('code').value
+                });
+            };
+        </script>
+
+    </body>
+</html>

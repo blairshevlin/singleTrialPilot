@@ -1374,7 +1374,7 @@
 
   var end = {
     type: "html-keyboard-response",
-    stimulus: '<p>You have completed the task. Press any key to continue.</p>'
+    stimulus: '<p>You have completed the task. Press any key to continue.</p>',
   };
   //timeline.push(end);
   var SAT_timeline = {
@@ -1390,23 +1390,24 @@
 
     // REWARDS/OUTCOMES
 
-    if(Math.random() <= (1/50)){
+    if(Math.random() <= (1)){
         var endRewarded = {
             type: "html-keyboard-response",
+            stimulus: "<p>You have completed all the tasks. Congratulations - you were selected to gain a bonus. Press the spacebar to see your bonus, based on a " +
+                "randomly selected <b>REAL</b> round.</p>",
+            choices: [32],
             on_start: function (data) {
                 rewardData = jsPsych.data.get().filter({ trial_type: 'econ-choice', isReal: true, task: "gamble" }).values();
-                window.rewardObj = jsPsych.randomization.sampleWithoutReplacement(rewardData, 1)[0];
-                if (rewardObj.key_press === 70) {
+                let rewardObj = jsPsych.randomization.sampleWithoutReplacement(rewardData, 1)[0];
+                window.rewardObj = rewardObj;
+                if (window.rewardObj.key_press === 70) {
                     window.choseLeft = true;
                     window.rewardStim = rewardObj.stimulus[0];
                 } else {
                     window.choseLeft = false;
                     window.rewardStim = rewardObj.stimulus[1];
                 };
-            },
-            stimulus: "<p>You have completed all the tasks. Congratulations - you were selected to gain a bonus. Press the spacebar to see your bonus, based on a " +
-                "randomly selected <b>REAL</b> round.</p>",
-            choices: [32]
+            }
         };
 
         var lotRewardScreen1 = {
@@ -1425,14 +1426,14 @@
             type: "html-keyboard-response",
             on_start: function (data) {
                 if (choseLeft == true) {
-                    var perc = rewardObj.leftPerc1;
+                    var perc = window.rewardObj.leftPerc1;
                     if (Math.floor(Math.random()) < perc) {
                         window.rewardVal = rewardObj.leftOut2;
                     } else {
                         window.rewardVal = rewardObj.leftOut1;
                     };
                 } else {
-                    var perc = rewardObj.rightPerc1;
+                    var perc = window.rewardObj.rightPerc1;
                     if (Math.floor(Math.random()) < perc) {
                         window.rewardVal = rewardObj.rightOut2;
                     } else {
@@ -1445,21 +1446,14 @@
                 "<p>Press the spacebar to continue.</p>",
             choices: [32],
             on_load: function dispReward() {
-                rewardValString = rewardVal.toString();
+                rewardValString = window.rewardVal.toString();
                 var giveFlag = 'PAY';
                 document.getElementById('reward').textContent += rewardValString;
             }
         };
 
         var lotRewardScreens = {
-            timeline: [endRewarded, lotRewardScreen1, lotRewardScreen2],
-            conditional_function: function () {
-                if (rewardObj.task == "gamble") {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+            timeline: [endRewarded, lotRewardScreen1, lotRewardScreen2]
         };
         timeline.push(lotRewardScreens);
     } else {
@@ -1478,18 +1472,19 @@
         on_finish: function () {
             jsPsych.data.addProperties({
                 subject: subject_id,
-                reward: rewardValString,
+                reward: window.rewardVal,
                 workerID: turkInfo.workerId,
                 assignmentIdD: turkInfo.assignmentId,
                 hitID: turkInfo.hitId,
-                giveFlag: giveFlag
+                //giveFlag: giveFlag
             });
         $.ajax({
           type: "POST",
           url: "/experiment-data",
           data: JSON.stringify(jsPsych.data.get().values()),
           contentType: "application/json",
-          success: window.location.href = "finish"
+          success: window.location.href = "submitHit"
+          //success: window.location.href = "finish"
         })
         .fail(function() {
           alert("A problem occurred while writing to the database. Please contact the researcher for more information.")

@@ -1215,7 +1215,7 @@
   var practiceEnd ={
     type: 'html-keyboard-response',
     stimulus:`<p>You have completed the practice round. You will now begin the main task. </p>
-    <p>Try to keep you fingers on the <b>F</b> and <b>J</b> keys while you view the images.<p>
+    <p>Try to keep your fingers on the <b>F</b> and <b>J</b> keys while you view the images.<p>
     <p>And please respond as <b>quickly</b> as you can, in fewer than 3.5 seconds.</p>
     <p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin to task.</p>`,
     choices: ['space']
@@ -1426,19 +1426,32 @@
             type: "html-keyboard-response",
             on_start: function (data) {
                 if (choseLeft == true) {
-                    var perc = window.rewardObj.leftPerc1;
-                    if (Math.floor(Math.random()) < perc) {
-                        window.rewardVal = rewardObj.leftOut2;
+                    if(leftLab==='gamble'){
+                        //chosen option is a lottery
+                        var perc = window.rewardObj.leftPerc1;
+                        if (Math.floor(Math.random()) < perc) {
+                            window.rewardVal = rewardObj.leftOut2;
+                        } else {
+                            window.rewardVal = rewardObj.leftOut1;
+                        };
                     } else {
+                        //outcome is sure thing
                         window.rewardVal = rewardObj.leftOut1;
-                    };
+                    }
+
                 } else {
-                    var perc = window.rewardObj.rightPerc1;
-                    if (Math.floor(Math.random()) < perc) {
-                        window.rewardVal = rewardObj.rightOut2;
+                    if(rightLab ==='gamble'){
+                        //chosen option is a lottery
+                        var perc = window.rewardObj.rightPerc1;
+                        if (Math.floor(Math.random()) < perc) {
+                            window.rewardVal = rewardObj.rightOut2;
+                        } else {
+                            window.rewardVal = rewardObj.rightOut1;
+                        };
                     } else {
+                        //outcome is sure thing
                         window.rewardVal = rewardObj.rightOut1;
-                    };
+                    }
                 };
             },
             stimulus: "<p>You earned the following amount of points from playing the gamble shown on the previous screen:</p>" +
@@ -1483,8 +1496,8 @@
           url: "/experiment-data",
           data: JSON.stringify(jsPsych.data.get().values()),
           contentType: "application/json",
-          success: window.location.href = "submitHit"
-          //success: window.location.href = "finish"
+          //success: window.location.href = "submitHit"
+          success: window.location.href = "finish"
         })
         .fail(function() {
           alert("A problem occurred while writing to the database. Please contact the researcher for more information.")

@@ -1397,9 +1397,10 @@
                 "randomly selected <b>REAL</b> round.</p>",
             choices: [32],
             on_start: function (data) {
-                rewardData = jsPsych.data.get().filter({ trial_type: 'econ-choice', isReal: true, task: "gamble" }).values();
+                var rewardData = jsPsych.data.get().filter({ trial_type: 'econ-choice', isReal: true, task: "gamble" }).values();
                 let rewardObj = jsPsych.randomization.sampleWithoutReplacement(rewardData, 1)[0];
                 window.rewardObj = rewardObj;
+                window.rewardData = rewardData;
                 if (window.rewardObj.key_press === 70) {
                     window.choseLeft = true;
                     window.rewardStim = rewardObj.stimulus[0];
@@ -1425,8 +1426,8 @@
         var lotRewardScreen2 = {
             type: "html-keyboard-response",
             on_start: function (data) {
-                if (choseLeft == true) {
-                    if(leftLab==='gamble'){
+                if (window.rewardData.choseLeft == true) {
+                    if(window.rewardObj.leftLab==='gamble'){
                         //chosen option is a lottery
                         var perc = window.rewardObj.leftPerc1;
                         if (Math.floor(Math.random()) < perc) {
@@ -1440,7 +1441,7 @@
                     }
 
                 } else {
-                    if(rightLab ==='gamble'){
+                    if(window.rewardObj.rightLab ==='gamble'){
                         //chosen option is a lottery
                         var perc = window.rewardObj.rightPerc1;
                         if (Math.floor(Math.random()) < perc) {

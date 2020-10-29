@@ -9,6 +9,7 @@
     <script src="jsPsych/jspsych-image-keyboard-response.js"></script>
     <script src="jsPsych/jspsych-html-button-response.js"></script>
     <script src="jsPsych/jspsych-xab.js"></script>
+    <script src="jsPsych/jspsych-survey-text.js"></script>
     <script src="jsPsych/jspsych-econ-choice.js"></script>
     <script src="jsPsych/jspsych-fullscreen.js"></script>
     <script src="jsPsych/jspsych-combinations.js"></script>
@@ -355,9 +356,19 @@
             }
         ])
     };
-
+    //Intro demographic screen
+    var demo_trial = {
+        type: 'survey-text',
+        preamble: "<p>Thanks for choosing our experiment! Please answer the following questions to begin today's study.</p>",
+        questions: [
+            {prompt: "What is your worker ID?", name: 'workerID'}, 
+            {prompt: "What is your age?", name: 'Age'},
+            {prompt: "What is your gender identify? (Female/Male/Non-binary/Other/Prefer not to say", name: "Gender"}
+        ],
+    };
+    timeline.push(demo_trial);
     //LOTTERY INSTRUCTIONS AND PRACTICE SCREENS
-
+ 
     var lotInstructions1 = {
         type: "html-keyboard-response",
         stimulus: "<p>In this task, you will make decisions between pairs of gambles over 8 rounds.</p>" +

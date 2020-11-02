@@ -1232,67 +1232,32 @@
     choices: ['space']
   }
   //timeline.push(practiceEnd)
+    var nonwords = [
+        {word: 'halpy', word_validity: 'invalid', word_frequency: 'undefined'},
+        {word: 'perkn', word_validity: 'invalid', word_frequency: 'undefined'},
+        {word: 'caxdy', word_validity: 'invalid', word_frequency: 'undefined'},
+        {word: 'hitpo', word_validity: 'invalid', word_frequency: 'undefined'}
+    ];
+    nonwords = jsPsych.randomization.shuffle(nonwords);
+    var wordsHF = [
+        {word: 'happy', word_validity: 'valid', word_frequency: 'high'},
+        {word: 'candy', word_validity: 'valid', word_frequency: 'high'}
+    ];  
+    wordsHF = jsPsych.randomization.shuffle(wordsHF);
+    var wordsLF = [
+        {word: 'perky', word_validity: 'valid', word_frequency: 'low'},
+        {word: 'hippo', word_validity: 'valid', word_frequency: 'low'}
+    ];
+    wordsLF = jsPsych.randomization.shuffle(wordsLF);
 
-  var randomNum = Math.random;
-  if(randomNum>.75){
-    var stimuliSpeed = [
-      {word: 'happy', word_validity: 'valid', word_frequency: 'high'},
-      {word: 'halpy', word_validity: 'invalid', word_frequency: 'undefined'},
-      {word: 'perky', word_validity: 'valid', word_frequency: 'low'},
-      {word: 'perkn', word_validity: 'invalid', word_frequency: 'undefined'},
-    ];
-
-    var stimuliAccuracy = [
-      {word: 'candy', word_validity: 'valid', word_frequency: 'high'},
-      {word: 'caxdy', word_validity: 'invalid', word_frequency: 'undefined'},
-      {word: 'hippo', word_validity: 'valid', word_frequency: 'low'},
-      {word: 'hitpo', word_validity: 'invalid', word_frequency: 'undefined'},
-    ];
-  }
-
-
-  else if(randomNum<.75 && randomNum>.50){
-    var stimuliSpeed = [
-      {word: 'happy', word_validity: 'valid', word_frequency: 'high'},
-      {word: 'halpy', word_validity: 'invalid', word_frequency: 'undefined'},
-      {word: 'hippo', word_validity: 'valid', word_frequency: 'low'},
-      {word: 'hitpo', word_validity: 'invalid', word_frequency: 'undefined'},
-    ];
-
-    var stimuliAccuracy = [
-      {word: 'candy', word_validity: 'valid', word_frequency: 'high'},
-      {word: 'caxdy', word_validity: 'invalid', word_frequency: 'undefined'},
-      {word: 'perky', word_validity: 'valid', word_frequency: 'low'},
-      {word: 'perkn', word_validity: 'invalid', word_frequency: 'undefined'},
-    ];
-  } else if(randomNum<.50 && randomNum>.25){
-    var stimuliSpeed = [
-      {word: 'candy', word_validity: 'valid', word_frequency: 'high'},
-      {word: 'caxdy', word_validity: 'invalid', word_frequency: 'undefined'},
-      {word: 'perky', word_validity: 'valid', word_frequency: 'low'},
-      {word: 'perkn', word_validity: 'invalid', word_frequency: 'undefined'},
-    ];
-
-    var stimuliAccuracy = [
-      {word: 'happy', word_validity: 'valid', word_frequency: 'high'},
-      {word: 'halpy', word_validity: 'invalid', word_frequency: 'undefined'},
-      {word: 'hippo', word_validity: 'valid', word_frequency: 'low'},
-      {word: 'hitpo', word_validity: 'invalid', word_frequency: 'undefined'},
-    ];
-  } else{
-    var stimuliSpeed = [
-      {word: 'candy', word_validity: 'valid', word_frequency: 'high'},
-      {word: 'caxdy', word_validity: 'invalid', word_frequency: 'undefined'},
-      {word: 'hippo', word_validity: 'valid', word_frequency: 'low'},
-      {word: 'hitpo', word_validity: 'invalid', word_frequency: 'undefined'},
-    ];
-    var stimuliAccuracy = [
-      {word: 'happy', word_validity: 'valid', word_frequency: 'high'},
-      {word: 'halpy', word_validity: 'invalid', word_frequency: undefined},
-      {word: 'perky', word_validity: 'valid', word_frequency: 'low'},
-      {word: 'perkn', word_validity: 'invalid', word_frequency: undefined},
-    ];
-  }
+  var stimuliSpeed = [
+        nonwords[0],nonwords[1],wordsHF[0],wordsLF[0]
+  ];
+  var stimuliAccuracy = [
+        nonwords[2],nonwords[3],wordsHF[1],wordsLF[1]
+  ];
+  stimuliSpeed = jsPsych.randomization.shuffle(stimuliSpeed);
+  stimuliAccuracy = jsPsych.randomization.shuffle(stimuliAccuracy);
   //Main Task
   var instructionsSpeed = {
     type: 'html-keyboard-response',

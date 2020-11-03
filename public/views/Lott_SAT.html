@@ -371,23 +371,35 @@
  
     var lotInstructions1 = {
         type: "html-keyboard-response",
-        stimulus: "<p>In this task, you will make decisions between pairs of gambles over 8 rounds.</p>" +
-            "<p>Four of these gambles have a chance of paying out a bonus at the end of the study. You will be " +
-            "told which four gambles are real and have a chance of paying out a bonus, and which are hypothetical.</p>" +
-            "<p>One out of every 50 workers will be randomly chosen to be paid a bonus. If you are chosen, one of the real " +
-            "gambles will be chosen at random and played out at the end of the study. Your bonus will be determined " +
-            "based on that gamble's outcome.</p>" +
+        stimulus: "<p>In this task, you will make decisions between pairs of gambles over 8 rounds. " +
+            "Each  gamble will be represented as a pie graph. For each gamble, the printed numbers "+
+            "represent a <b>real dollar amount</b> that you can potentially win, while the portion "+
+            "of the pie that is filled in represents the probabiltiy of winning that outcome.</p>"+
             "<p>Press the spacebar to continue.</p>",
         //post_trial_gap: 2000,
         choices: [32]
     };
     //timeline.push(lotInstructions1);
-
     var lotInstructions2 = {
         type: "html-keyboard-response",
-        stimulus: "<p>In some rounds, one of the gambles will be a completely filled-in pie " +
-            "graph with one number displayed in the center of the pie. The outcome of such " +
-            "gambles is the printed dollar amount with 100% probability.</p>" +
+        stimulus: "<p>Four of these eight gambles have a chance of paying out a bonus at the end of " +
+            "the study. You will be told which four gambles are real and have a chance of paying out " +
+            "this bonus, and which are hypothetical.</p>"+
+            "<p>One out of every 50 workers will be randomly chosen to be paid this bonus. If you are " +
+            "chosen, one of the real gambles will be chosen at random and played out at the end of the " +
+            "study. Your bonus will be determined based on that gamble's outcome. You will gain the " +
+            "full dollar amount of the chosen gamble's outcome.</p>"+
+            "<p>Press the spacebar to continue.</p>",
+        //post_trial_gap: 2000,
+        choices: [32]
+    };
+
+    var lotInstructions3 = {
+        type: "html-keyboard-response",
+        stimulus: 
+            "<p>In some rounds, one of the options will be a completely filled-in pie graph with " +
+            "one number displayed in the center of the pie. The outcome of such gambles is the " +
+            "printed amount with 100% probability.</p>"+
             "<p>Press the spacebar to continue.</p>",
         //post_trial_gap: 2000,
         choices: [32]
@@ -395,14 +407,14 @@
     //  timeline.push(lotInstructions2);
 
 
-    var lotInstructions3 = {
+    var lotInstructions4 = {
         type: "html-keyboard-response",
-        stimulus: "<p>You will now see an example round. First, a cross will be displayed in the " +
-            "center of the screen. Next, two gambles will be shown on the screen, and you will " +
-            "select which gamble you would prefer to play.</p><p>Use the <b>F</b> key to choose the " +
-            "gamble on the left and the <b>J</b> key to choose the gamble on the right.</p>" +
-            "<p>The potential outcomes of each gamble are printed in text, and the probability of each " +
-            "outcome is represented by the area of the pie that is filled in.</p>" +
+        stimulus: "<p>You will now see an example round. First, a cross will be displayed in " +
+            "the center of the screen. Next, two gambles will be shown on the screen, and you " +
+            "will select which gamble you would prefer to play.</p><p>Use the <b>F</b> key to " +
+            "choose the gamble on the left and the <b>J</b> key to choose the gamble on the right.</p>" +
+            "<p>Remember, the potential outcomes of each gamble are printed in text, and the " +
+            "probability of each outcome is represented by the portion of the pie that is filled in.</p>" +
             "<p>Press the spacebar to continue.</p>",
         choices: [32]
     };
@@ -413,9 +425,10 @@
         timeline: [
             {
                 type: "html-keyboard-response",
-                stimulus: "<p>In this example, both gambles have a 30% chance for the larger reward " +
-                    "and a 70% chance for the smaller reward.</p><p>In this round, you are free to choose either the left (<b>F</b>) or right (<b>J</b>) option.</p>" +
-                    "<p>Note that in the actual rounds, you will <b>NOT</b> be told the probability of each " +
+                stimulus: "<p>In this example, both gambles have a 30% chance for the larger reward and a 70% chance " +
+                    "for the smaller reward.</p><p>In this round, you are free to choose either the left (<b>F</b>)" +
+                    "or right (<b>J</b>) option.</p>"+
+                    "<p>Note that in the actual rounds, you will <b>NOT</b> be told the probability of each outcome " +
                     "outcome. You must use the relative sizes of the filled in areas of the pie to make your choice.</p>" +
                     "<p>Rest your fingers on the F and J keys, and press the spacebar to begin the example round.</p>",
                 choices: [32]
@@ -425,13 +438,13 @@
                 type: "econ-choice",
                 stimulus: [high_lott_pairs[1][0].stim, high_lott_pairs[1][1].stim],
                 choices: ["F", "J"],
-                trial_duration: 5000    
+                trial_duration: 5500    
             }
         ]
     };
     //   timeline.push(lotExample);
 
-    var lotInstructions4 = {
+    var lotInstructions5 = {
         type: "html-keyboard-response",
         stimulus: "<p>You will now complete a practice round to ensure that you understand " +
             "how the gambles work. In this round, we want you to choose the " +
@@ -689,7 +702,7 @@
 
     // LOTTERY PRACTICE TIMELINE
     var lot_practice_timeline = {
-        timeline: [lotInstructions1, lotInstructions2, lotInstructions3, lotExample, lotInstructions4, fixation, lotPractice1, lot_cond_fast, lot_cond_slow,
+        timeline: [lotInstructions1, lotInstructions2, lotInstructions3, lotInstructions4, lotExample, lotInstructions5, fixation, lotPractice1, lot_cond_fast, lot_cond_slow,
             lot_cond_incorrect, lot_cond2_slow, lot_cond2_fast, lot_cond2_incorrect, lot_cond3_slow, lot_cond3_fast, lot_cond3_incorrect, practiceEnd]
     };
 
@@ -752,7 +765,7 @@
         {choice: [high_lott_pairs[4][0].stim, high_lott_pairs[4][1].stim], 
             leftLab: high_lott_pairs[4][0].lab, 
             rightLab: high_lott_pairs[4][1].lab, 
-            mag: "high", 
+            mag: "high", twoLott: true,
             leftOut1: high_lott_pairs[4][0].out1,
             leftOut2: high_lott_pairs[4][0].out2,
             rightOut1: high_lott_pairs[4][1].out1,
@@ -938,9 +951,9 @@
     // SAT TASK
     var instr1 = {
     type: 'html-keyboard-response',
-    stimulus:`<p>In this task, you will be viewing text stimuli. A string of letters will appear, and you will respond if it is a word or non-word. </p>
-    <p>In one instance, you will be asked to respond as quickly as possible. In another instance, you will be asked to respond as accurately as possible.</p>
-    <p>When the text appears, press <b>F</b> if the stimulus is a word and <b>J</b> if the stimulus is not a word. </p> 
+    stimulus:`<p>In this task, you will make a decision about whether a combination of letters is a word in the English language or not. When the letters appear on the screen, press <b>F</b> if the combination of letters is a word, and <b>J</b> if the it is not a word. </p> 
+    <p>For example, if you see the word "CHILD", you would respond "yes" using the <b>F</b> key, but if you see the letters "XLICE" you would respond "no" using the <b>J</b> key.</p>
+    <p>In addition, there are two sets of instructions for this task. In one instance, you will be asked to respond as quickly as possible. In another instance, you will be asked to respond as accurately as possible.</p>
     <p>Press the space bar to continue.</p>`,
     choices: ['space']
   };

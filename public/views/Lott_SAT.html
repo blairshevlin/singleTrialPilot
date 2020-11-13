@@ -548,7 +548,7 @@
     };
 
     // LOTTERY CONDITIONAL STATEMENTS FOR PRACTICE
-
+    var lot_fail = 0;
     var lot_cond_fast = {
         timeline: [lot_err_fast, fixation, lotPractice2],
         conditional_function: function () {
@@ -558,6 +558,7 @@
                 return false;
             } else {
                 window.fast1 = true;
+                lot_fail++;
                 return true;
             }
         }
@@ -573,6 +574,7 @@
                 return false;
             } else {
                 window.slow1 = true;
+                lot_fail++;
                 return true;
             }
         }
@@ -585,6 +587,7 @@
             var data = jsPsych.data.get().last(1).values()[0];
             if (data.choice == 'safe' && fast1 != true && slow1 != true) {
                 window.acc = false;
+                lot_fail++;
                 return true;
             } else {
                 window.acc = true;
@@ -603,6 +606,7 @@
                 return false;
             } else {
                 window.slow2 = true;
+                lot_fail++;
                 return true;
             }
         }
@@ -618,6 +622,7 @@
                 return false;
             } else {
                 window.fast2 = true;
+                lot_fail++;
                 return true;
             }
         }
@@ -630,6 +635,7 @@
             var data = jsPsych.data.get().last(1).values()[0];
             if (acc == false && data.choice == 'safe' && fast2 != true && slow2 != true) {
                 window.acc2 = false;
+                lot_fail++;
                 return true;
             } else {
                 window.acc2 = true;
@@ -643,10 +649,10 @@
         timeline: [lot_err_slow_last],
         conditional_function: function () {
             var data = jsPsych.data.get().last(1).values()[0];
-            if (data.rt <= 5500) {
+            if (data.rt <= 5500 && lot_fail >= 2) {
                 window.slow3 = false;
                 jsPsych.data.addProperties({
-                    flag: 'lotFail_slow'
+                    lot_flag: 'lotFail_slow'
                 });
                 return false;
             } else {
@@ -661,10 +667,10 @@
         timeline: [lot_err_fast_last],
         conditional_function: function () {
             var data = jsPsych.data.get().last(1).values()[0];
-            if (data.rt >= 500 || slow3 == true) {
+            if ((data.rt >= 500 || slow3 == true) && lot_fail >= 2) {
                 window.fast3 = false;
                 jsPsych.data.addProperties({
-                    flag: 'lotFail_fast'
+                    lot_flag: 'lotFail_fast'
                 });
                 return false;
             } else {
@@ -679,9 +685,9 @@
         timeline: [lot_err_acc_last],
         conditional_function: function () {
             var data = jsPsych.data.get().last(1).values()[0];
-            if (acc2 == false && data.choice == 'safe' && fast3 != true && slow3 != true) {
+            if ((acc2 == false && data.choice == 'safe' && fast3 != true && slow3 != true) && lot_fail >= 2) {
                 jsPsych.data.addProperties({
-                    flag: 'lotFail_choice'
+                    lot_flag: 'lotFail_choice'
                 });
                 return true;
             } else {
@@ -888,6 +894,13 @@
                     data.rightLab = jsPsych.timelineVariable('rightLab', true);
                     data.isReal = true;
                     data.trialN = trial_count;
+                    if ((data.leftLab == "sure"|| data.leftLab == "A") && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')){
+                        data.choice = "safe";
+                    } else if ((data.rightLab == "sure"|| data.rightLab == "A") && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+                        data.choice = "safe";
+                    } else {
+                        data.choice = "risky";
+                    }
                     trial_count++;
                 }
             }
@@ -921,6 +934,13 @@
                     data.leftLab = jsPsych.timelineVariable('leftLab', true);
                     data.rightLab = jsPsych.timelineVariable('rightLab', true);
                     data.trialN = trial_count;
+                    if ((data.leftLab == "sure"|| data.leftLab == "A") && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')){
+                        data.choice = "safe";
+                    } else if ((data.rightLab == "sure"|| data.rightLab == "A") && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+                        data.choice = "safe";
+                    } else {
+                        data.choice = "risky";
+                    }
                     trial_count++;
                 }
             }
@@ -1111,12 +1131,15 @@
   };
  // timeline.push(testNonWord)
 
+ var SAT_FAIL = 0;
+
   var conditional1_slow = {
     timeline: [mask_err_slow, testNonWord2],
     conditional_function: function(){
       var data = jsPsych.data.get().last(1).values()[0];
       if(data.rt >= 2500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
-          return true;
+        SAT_FAIL++;
+        return true;
         } else{
           return false;
         } 
@@ -1129,6 +1152,7 @@
     conditional_function: function(){
       var data = jsPsych.data.get().last(1).values()[0];
       if(data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+        SAT_FAIL++;
         return true;
       } else{
         return false;
@@ -1142,7 +1166,8 @@
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
         if(data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')){
-          return true;
+            SAT_FAIL++; 
+            return true;
         } else{
           return false;
         } 
@@ -1155,7 +1180,8 @@
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
         if(data.rt >= 2500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
-          return true;
+            SAT_FAIL++;
+            return true;
         } else{
           return false;
         } 
@@ -1168,7 +1194,8 @@
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
         if(data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
-          return true;
+            SAT_FAIL++;
+            return true;
         } else{
           return false;
         } 
@@ -1180,6 +1207,7 @@
         conditional_function: function(){
           var data = jsPsych.data.get().last(1).values()[0];
           if(data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')){
+            SAT_FAIL++;
             return true;
           } else{
             return false;
@@ -1192,9 +1220,9 @@
       timeline: [mask_err_last_slow],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
-        if(data.rt >= 2500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+        if((data.rt >= 2500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')) && SAT_FAIL>=2){
             jsPsych.data.addProperties({
-                flag: 'SATFail_Slow'
+                sat_flag: 'SATFail_Slow'
             });
             return true;
         } else{
@@ -1208,9 +1236,9 @@
       timeline: [mask_err_last_fast],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
-        if(data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+        if((data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')) && SAT_FAIL>=2){
             jsPsych.data.addProperties({
-                flag: 'SATFail_Fast'
+                sat_flag: 'SATFail_Fast'
             });
             return true;
         } else{
@@ -1224,9 +1252,9 @@
       timeline: [mask_err_last_acc],
       conditional_function: function(){
       var data = jsPsych.data.get().last(1).values()[0];
-      if(data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')){
+      if((data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')) && SAT_FAIL>=2){
         jsPsych.data.addProperties({
-            flag: 'SATFail_Acc'
+            sat_flag: 'SATFail_Acc'
         });
         return true;
       } else{

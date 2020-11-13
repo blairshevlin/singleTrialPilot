@@ -3,7 +3,6 @@ const express = require('express');
 const body_parser = require('body-parser');
 const fetch = require("node-fetch");
 const { response } = require('express');
-//    mongoose = require('mongoose');
 const Dropbox = require("dropbox").Dropbox;
 
 
@@ -45,30 +44,22 @@ app.get('/', function(request, response) {
     response.render('index.html');
 });
 
-app.get('/Pilot_Lot_Lex', function(request, response) {
-    //response.render('speed_accuracy_tradeoff.html');
-    // response.render('Lott.html');
+app.get('/Exp1_Lot_Lex', function(request, response) {
     response.render('Lott_SAT.html');
 });
 
-app.get('/submitHit', function(request, response) {
-    response.render('submitHit.html');
-})
-
 app.get('/finish', function(request, response) {
     response.render('finish.html');
-})
+});
 
 app.post("/experiment-data", function (request, response) {
     data = request.body;
     subject_id = data[0].subject;
     subject_id = subject_id.replace(/'/g, "");
-    //bonus_flag = data[0].giveFlag.replace(/'/g, "");
-    //saveDropbox(JSON.stringify(data), `subject_data_${subject_id}_${bonus_flag}.json`).catch(err => console.log(err));
     saveDropbox(JSON.stringify(data), `subject_data_${subject_id}.json`).catch(err => console.log(err));
 });
 
 // --- START THE SERVER 
-var server = app.listen(process.env.PORT || 3000, function(){
+var server = app.listen(process.env.PORT || 3001, function(){
     console.log("Listening on port %d", server.address().port);
 });

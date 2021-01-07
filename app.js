@@ -13,7 +13,7 @@ const starttime = Date.now();
 
 // --- Database SETUP
 const dbx = new Dropbox({
-    accessToken: 'sl.Ao1_iGWCa7O2x4dEOFLIqctIhtUTF8XFdB4WNSYC529Nw8oZ0WhLz630u96MgGWvFLZ7rvWWghAx9-WmyW2RMz12BP2Bb_rABOHJY32Z2lbd3v4Y084OdnyBChXUgqRSSw95fW4',
+    accessToken: 'kcPc73cpDtkAAAAAAAAAAUaQqw6etKbz7TUFHj_P8ph0MnT8NgYhK42vgEmytd9I',
     fetch
 });
 
@@ -60,6 +60,6 @@ app.post("/experiment-data", function (request, response) {
 });
 
 // --- START THE SERVER 
-var server = app.listen(process.env.PORT || 3010, function(){
+var server = app.listen(process.env.PORT || 3021, function(){
     console.log("Listening on port %d", server.address().port);
 });

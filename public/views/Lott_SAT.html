@@ -58,7 +58,7 @@
         type: 'html-keyboard-response',
         stimulus: '<div style="font-size:60px;">+</div>',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 250,
+        trial_duration: 300,
     };
 
     var trial_count = 1;
@@ -426,7 +426,7 @@
             {
                 type: "html-keyboard-response",
                 stimulus: "<p>In this example, both gambles have a 30% chance for the larger reward and a 70% chance " +
-                    "for the smaller reward.</p><p>In this round, you are free to choose either the left (<b>F</b>)" +
+                    "for the smaller reward.</p><p>In this round, you are free to choose either the left (<b>F</b>) " +
                     "or right (<b>J</b>) option.</p>"+
                     "<p>Note that in the actual rounds, you will <b>NOT</b> be told the probability of each outcome " +
                     "outcome. You must use the relative sizes of the filled in areas of the pie to make your choice.</p>" +
@@ -1516,8 +1516,7 @@
           contentType: "application/json",
           //success: window.location.href = "submitHit"
           success: window.location.href = "finish"
-        })
-        .fail(function() {
+        }).fail(function() {
           alert("A problem occurred while writing to the database. Please contact the researcher for more information.")
           window.location.href = "/";
         });

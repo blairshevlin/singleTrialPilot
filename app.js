@@ -60,6 +60,6 @@ app.post("/experiment-data", function (request, response) {
 });
 
 // --- START THE SERVER 
-var server = app.listen(process.env.PORT || 3001, function(){
+var server = app.listen(process.env.PORT || 3010, function(){
     console.log("Listening on port %d", server.address().port);
 });

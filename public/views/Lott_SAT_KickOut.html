@@ -367,34 +367,6 @@
         ],
     };
     timeline.push(demo_trial);
-
-    //For when people fail the practice of either section
-    var studyEnd = {
-        type: 'html-keyboard-response',
-        stimulus: `<p> You failed the practice three times. Unfortunately, you will not be able to complete the study. Press the spacebar to exit out of the study. </p>`,
-        choices: [32],
-        on_finish:  function () {
-            jsPsych.data.addProperties({
-                subject: subject_id,
-                workerID: turkInfo.workerId,
-                assignmentID: turkInfo.assignmentId,
-                hitID: turkInfo.hitId,
-            });
-        $.ajax({
-          type: "POST",
-          url: "/experiment-data",
-          data: JSON.stringify(jsPsych.data.get().values()),
-          contentType: "application/json",
-          //success: window.location.href = "submitHit"
-          success: window.location.href = "finish"
-        }).fail(function() {
-          alert("A problem occurred while writing to the database. Please contact the researcher for more information.")
-          window.location.href = "/";
-        });
-        }
-    };
-
-
     //LOTTERY INSTRUCTIONS AND PRACTICE SCREENS
  
     var lotInstructions1 = {
@@ -619,7 +591,7 @@
         timeline: [lot_err_acc, fixation, lotPractice2],
         conditional_function: function () {
             var data = jsPsych.data.get().last(1).values()[0];
-            if (data.choice == 'safe' && window.fast1 != true && window.slow1 != true) {
+            if (data.choice == 'safe' && fast1 != true && slow1 != true) {
                 window.acc = false;
                 lot_fail++;
                 return true;
@@ -676,7 +648,7 @@
         timeline: [lot_err_acc, fixation, lotPractice3],
         conditional_function: function () {
             var data = jsPsych.data.get().last(1).values()[0];
-            if (data.choice == 'safe' && window.fast2 != true && window.slow2 != true) {
+            if (acc == false && data.choice == 'safe' && fast2 != true && slow2 != true) {
                 window.acc2 = false;
                 lot_fail++;
                 return true;
@@ -695,71 +667,54 @@
         timeline: [lot_err_slow_last],
         conditional_function: function () {
             var data = jsPsych.data.get().last(1).values()[0];
-            if (data.rt <= 5500) {
+            if (data.rt <= 5500 && lot_fail >= 2) {
                 window.slow3 = false;
+                jsPsych.data.addProperties({
+                    lot_flag: 'lotFail_slow'
+                });
                 return false;
             } else {
-                lot_fail++;
                 window.slow3 = true;
                 return true;
             }
+            jsPsych.data.addProperties({
+                lot_fail: lot_fail
+            });
         }
     };
-
     //   timeline.push(lot_cond3_slow);
 
     var lot_cond3_fast = {
-        timeline: [studyEnd],
+        timeline: [lot_err_fast_last],
         conditional_function: function () {
             var data = jsPsych.data.get().last(1).values()[0];
-            if ((data.rt >= 500 || slow3 == true)) {
+            if ((data.rt >= 500 || slow3 == true) && lot_fail >= 2) {
                 window.fast3 = false;
+                jsPsych.data.addProperties({
+                    lot_flag: 'lotFail_fast'
+                });
                 return false;
             } else {
-                lot_fail++;
                 window.fast3 = true;
                 return true;
-            };
+            }
+            jsPsych.data.addProperties({
+                lot_fail: lot_fail
+            });
         }
     };
     //  timeline.push(lot_cond3_fast);
 
     var lot_cond3_incorrect = {
-        timeline: [studyEnd],
+        timeline: [lot_err_acc_last],
         conditional_function: function () {
             var data = jsPsych.data.get().last(1).values()[0];
-            if ((data.choice == 'safe' && fast3 != true && slow3 != true)) {
-                window.acc3 = false;
-                lot_fail++;
+            if ((acc2 == false && data.choice == 'safe' && fast3 != true && slow3 != true) && lot_fail >= 2) {
+                jsPsych.data.addProperties({
+                    lot_flag: 'lotFail_choice'
+                });
                 return true;
             } else {
-                window.acc3 = true;
-                return false;
-            }
-        }
-    };
-    //  timeline.push(lot_cond3_incorrect);
-    var lot_cond3_fail = {
-        timeline: [studyEnd],
-        conditional_function: function () {
-            var data = jsPsych.data.get().last(1).values()[0];
-            if (lot_fail==3) {
-                if (window.slow3 == true){
-                    jsPsych.data.addProperties({
-                        lot_flag: 'lotFail_slow'
-                    });
-                } else if (window.acc3 == false){
-                    jsPsych.data.addProperties({
-                        lot_flag: 'lotFail_acc'
-                    }); 
-                } else if (window.fast3 == true){
-                    jsPsych.data.addProperties({
-                        lot_flag: 'lotFail_fast'
-                    }); 
-                };
-                return true;
-            } else {
-
                 return false;
             }
             jsPsych.data.addProperties({
@@ -767,6 +722,8 @@
             });
         }
     };
+    //  timeline.push(lot_cond3_incorrect);
+
     var practiceEnd = {
         type: 'html-keyboard-response',
         stimulus: `<p>You have completed the practice section. You will now begin the main task. </p>
@@ -779,7 +736,7 @@
     // LOTTERY PRACTICE TIMELINE
     var lot_practice_timeline = {
         timeline: [lotInstructions1, lotInstructions2, lotInstructions3, lotInstructions4, lotExample, lotInstructions5, fixation, lotPractice1, lot_cond_fast, lot_cond_slow,
-            lot_cond_incorrect, lot_cond2_slow, lot_cond2_fast, lot_cond2_incorrect, lot_cond3_slow, lot_cond3_fast, lot_cond3_incorrect, lot_cond3_fail, practiceEnd]
+            lot_cond_incorrect, lot_cond2_slow, lot_cond2_fast, lot_cond2_incorrect, lot_cond3_slow, lot_cond3_fast, lot_cond3_incorrect, practiceEnd]
     };
 
     // LOTTERY REAL/HYPOTHETICAL INSTRUCTIONS
@@ -1066,7 +1023,7 @@
     <p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin the practice round.</p>
     `,
     choices: ['space']
-  };
+  }
 
   var mask_err_acc = {
     type: 'html-keyboard-response',
@@ -1085,7 +1042,7 @@
       <p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin the practice round.</p>
       `,
       choices: ['space']  
-  };
+  }
 
   var mask_err_last_slow = {
     type: 'html-keyboard-response',
@@ -1093,21 +1050,22 @@
     <p>Press the space bar to continue.</p>`,
     choices: ['space']
 
-  };
+  }
 
   var mask_err_last_fast = {
     type: 'html-keyboard-response',
     stimulus: `<p> Your responses was too fast. For the actual task, please try to view the text before making a response.</p>
     <p>Press the space bar to continue.</p>`,
     choices: ['space']
-  };
+  }
 
   var mask_err_last_acc = {
     type: 'html-keyboard-response',
     stimulus: `<p> You failed to make the correct response. For the actual task, please try to be more careful when making a response.</p>
     <p>Press the space bar to continue.</p>`,
     choices: ['space']
-  };
+  }
+
 
   var testNonWordStimuli = [
     {word: 'murkt', word_validity: 'invalid', word_frequency: 'undefined'},
@@ -1203,15 +1161,13 @@
  var SAT_FAIL = 0;
 
   var conditional1_slow = {
-    timeline: [mask_err_slow, fixation,testNonWord2],
+    timeline: [mask_err_slow, testNonWord2],
     conditional_function: function(){
       var data = jsPsych.data.get().last(1).values()[0];
       if(data.rt >= 2500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
         SAT_FAIL++;
-        window.sat_slow1 = true;
         return true;
         } else{
-        window.sat_slow1 = false;
           return false;
         } 
       }
@@ -1219,80 +1175,85 @@
   //timeline.push(conditional1_slow)
 
   var conditional1_fast = {
-    timeline: [mask_err_fast, fixation, testNonWord2],
+    timeline: [mask_err_fast, testNonWord2],
     conditional_function: function(){
       var data = jsPsych.data.get().last(1).values()[0];
-      if(data.rt <= 350 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+      if(data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
         SAT_FAIL++;
-        window.sat_fast1 = true;
         return true;
       } else{
-        window.sat_fast1 = false;  
         return false;
       } 
+      jsPsych.data.addProperties({
+            sat_fail: SAT_FAIL
+        });
     }
   };
   //timeline.push(conditional1_fast)
 
   var conditional1_acc = {
-      timeline: [mask_err_acc, fixation, testNonWord2],
+      timeline: [mask_err_acc, testNonWord2],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
-        if(data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f') & (window.sat_fast1==false & window.sat_slow1==false)){
+        if(data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')){
             SAT_FAIL++; 
-            window.sat_error1 = true;
             return true;
         } else{
-            window.sat_error1 = false;
           return false;
         }
+        jsPsych.data.addProperties({
+            sat_fail: SAT_FAIL
+        }); 
       }
   };
  // timeline.push(conditional1_acc)
 
   var conditional2_slow = {
-      timeline: [mask_err_slow, fixation, testNonWord3],
+      timeline: [mask_err_slow, testNonWord3],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
         if(data.rt >= 2500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
             SAT_FAIL++;
-            window.sat_slow2 = true;
             return true;
         } else{
-            window.sat_slow2 = false;
           return false;
         } 
+        jsPsych.data.addProperties({
+            sat_fail: SAT_FAIL
+        });
       }
   };
   //timeline.push(conditional2_slow)
     
   var conditional2_fast = {
-      timeline: [mask_err_fast, fixation, testNonWord3],
+      timeline: [mask_err_fast, testNonWord3],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
-        if(data.rt <= 350 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
+        if(data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')){
             SAT_FAIL++;
-            window.sat_fast2 = true;
             return true;
         } else{
-            window.sat_fast2 = false;
           return false;
         }
+        jsPsych.data.addProperties({
+            sat_fail: SAT_FAIL
+        }); 
       }
   }
   //timeline.push(conditional2_fast)
   var conditional2_acc = {
-        timeline: [mask_err_acc, fixation, testNonWord3],
+        timeline: [mask_err_acc, testNonWord3],
         conditional_function: function(){
           var data = jsPsych.data.get().last(1).values()[0];
-          if(data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f') & (window.sat_fast2==false & window.sat_slow2==false)){
+          if(data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')){
             SAT_FAIL++;
-            window.sat_error2 = true;
             return true;
           } else{
-            window.sat_error2 = false;
             return false;
           } 
+          jsPsych.data.addProperties({
+            sat_fail: SAT_FAIL
+        });
         }
   }
   //timeline.push(conditional2_acc)
@@ -1301,14 +1262,17 @@
       timeline: [mask_err_last_slow],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
-        if((data.rt >= 2500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j'))){
-            SAT_FAIL++;
-            window.sat_slow3 == true;
+        if((data.rt >= 2500 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')) && SAT_FAIL>=2){
+            jsPsych.data.addProperties({
+                sat_flag: 'SATFail_Slow'
+            });
             return true;
         } else{
-            window.sat_slow3 == false;
           return false;
         } 
+        jsPsych.data.addProperties({
+            sat_fail: SAT_FAIL
+        });
       }
   };
  // timeline.push(conditional3_slow)
@@ -1317,14 +1281,17 @@
       timeline: [mask_err_last_fast],
       conditional_function: function(){
         var data = jsPsych.data.get().last(1).values()[0];
-        if((data.rt <= 350 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j'))){
-            SAT_FAIL++;
-            window.sat_fast3 == true;
+        if((data.rt <= 300 && data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('j')) && SAT_FAIL>=2){
+            jsPsych.data.addProperties({
+                sat_flag: 'SATFail_Fast'
+            });
             return true;
-        } else {
-            window.sat_fast3 == false;
-            return false;
+        } else{
+          return false;
         } 
+        jsPsych.data.addProperties({
+            sat_fail: SAT_FAIL
+        });
       }
   };
   //timeline.push(conditional3_fast)
@@ -1332,45 +1299,20 @@
   var conditional3_acc = {
       timeline: [mask_err_last_acc],
       conditional_function: function(){
-        var data = jsPsych.data.get().last(1).values()[0];
-        if((data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f'))){
-            SAT_FAIL++;
-            window.sat_acc3 == false;
-            return true;
-        } else {
-            window.sat_acc3 == true;
-            return false;
-        }
-    }
+      var data = jsPsych.data.get().last(1).values()[0];
+      if((data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode('f')) && SAT_FAIL>=2){
+        jsPsych.data.addProperties({
+            sat_flag: 'SATFail_Acc'
+        });
+        return true;
+      } else{
+          return false;
+      }
+      jsPsych.data.addProperties({
+            sat_fail: SAT_FAIL
+        }); 
+      }
   }
-
-  var sat_cond3_fail = {
-        timeline: [studyEnd],
-        conditional_function: function () {
-            var data = jsPsych.data.get().last(1).values()[0];
-            if (lot_fail==3) {
-                if (window.sat_slow3 == true){
-                    jsPsych.data.addProperties({
-                        sat_flag: 'satFail_slow'
-                    });
-                } else if (window.sat_acc3 == false){
-                    jsPsych.data.addProperties({
-                        sat_flag: 'satFail_acc'
-                    }); 
-                } else if (window.sat_fast3 == true){
-                    jsPsych.data.addProperties({
-                        sat_flag: 'satFail_fast'
-                    }); 
-                };
-                return true;
-            } else {
-                return false;
-            }
-            jsPsych.data.addProperties({
-                sat_fail: SAT_FAIL
-             }); 
-        }
-    };
  // timeline.push(conditional3_acc)
 
   var practiceEnd ={
@@ -1503,10 +1445,16 @@
     stimulus: '<p>You have completed the task. Press any key to continue.</p>',
   };
   //timeline.push(end);
-  var SAT_timeline = {
-    timeline: [instr1,instr2,testNonWord,conditional1_slow,conditional1_fast,conditional1_acc,conditional2_slow,conditional2_fast, conditional2_acc,conditional3_slow,conditional3_fast,conditional3_acc,sat_cond3_fail,practiceEnd,firstInstruct,firstTrials,secondInstruct, 
-      secondTrials,end]
+  var SAT_TRAINING = {
+      timeline: [instr1,instr2,testNonWord,conditional1_slow,conditional1_fast,conditional1_acc,conditional2_slow,
+      conditional2_fast, conditional2_acc,conditional3_slow,conditional3_fast,conditional3_acc,practiceEnd]
   };
+  timeline.push(SAT_TRAINING);
+  if 
+  var SAT_timeline = {
+    timeline: [firstInstruct,firstTrials,secondInstruct,secondTrials,end]
+  };
+  var
 
   if (Math.random() > 0.5){
     timeline.push(SAT_timeline,lott_timeline_full);

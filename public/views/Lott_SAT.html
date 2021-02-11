@@ -371,7 +371,8 @@
     //For when people fail the practice of either section
     var studyEnd = {
         type: 'html-keyboard-response',
-        stimulus: `<p> You failed the practice three times. Unfortunately, you will not be able to complete the study. Press the spacebar to exit out of the study. </p>`,
+        stimulus: `<p> You failed the practice three times. Unfortunately, you will not be able to complete the study.</p>
+        <p>Press the spacebar to exit out of the study.</p>`,
         choices: [32],
         on_finish:  function () {
             jsPsych.data.addProperties({
@@ -562,7 +563,7 @@
 
     var lot_err_acc = {
         type: "html-keyboard-response",
-        stimulus: "<p>Whoops! Let's try that again. Remember, we want you to choose the choose the gamble that could reward the largest possible outcome on the screen</p>" +
+        stimulus: "<p>Whoops! Let's try that again. Remember, we want you to choose the choose the gamble that could reward the largest possible outcome on the screen.</p>" +
             "<p>When you are ready, rest your fingers on the <b>F</b> and <b>J</b> keys, and press the spacebar to begin the practice round.</p>",
         choices: [32]
     };

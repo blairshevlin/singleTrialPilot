@@ -380,6 +380,7 @@
                 workerID: turkInfo.workerId,
                 assignmentID: turkInfo.assignmentId,
                 hitID: turkInfo.hitId,
+                failure: 'TRUE'
             });
         $.ajax({
           type: "POST",
@@ -1617,6 +1618,7 @@
                 workerID: turkInfo.workerId,
                 assignmentID: turkInfo.assignmentId,
                 hitID: turkInfo.hitId,
+                failure: 'FALSE'
                 //giveFlag: giveFlag
             });
         $.ajax({

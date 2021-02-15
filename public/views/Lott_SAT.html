@@ -592,7 +592,7 @@
                 return true;
             }
             jsPsych.data.addProperties({
-                lot_fail: lot_fail
+                
             });
         }
     };
@@ -610,9 +610,6 @@
                 lot_fail++;
                 return true;
             }
-            jsPsych.data.addProperties({
-                lot_fail: lot_fail
-            });
         }
     };
     //  timeline.push(lot_cond_slow);
@@ -629,9 +626,6 @@
                 window.acc = true;
                 return false;
             }
-            jsPsych.data.addProperties({
-                lot_fail: lot_fail
-            });
         }
     };
     // timeline.push(lot_cond_incorrect);
@@ -648,9 +642,6 @@
                 lot_fail++;
                 return true;
             }
-            jsPsych.data.addProperties({
-                lot_fail: lot_fail
-            });
         }
     };
     //  timeline.push(lot_cond2_slow);
@@ -667,9 +658,6 @@
                 lot_fail++;
                 return true;
             }
-            jsPsych.data.addProperties({
-                lot_fail: lot_fail
-            });
         }
     };
     //  timeline.push(lot_cond2_fast);
@@ -686,9 +674,6 @@
                 window.acc2 = true;
                 return false;
             }
-            jsPsych.data.addProperties({
-                lot_fail: lot_fail
-            });
         }
     };
     //    timeline.push(lot_cond2_incorrect);
@@ -764,9 +749,6 @@
 
                 return false;
             }
-            jsPsych.data.addProperties({
-                lot_fail: lot_fail
-            });
         }
     };
     var practiceEnd = {
@@ -1368,9 +1350,6 @@
             } else {
                 return false;
             }
-            jsPsych.data.addProperties({
-                sat_fail: SAT_FAIL
-             }); 
         }
     };
  // timeline.push(conditional3_acc)
@@ -1619,6 +1598,8 @@
                 workerID: turkInfo.workerId,
                 assignmentID: turkInfo.assignmentId,
                 hitID: turkInfo.hitId,
+                nLot_fail: lot_fail,
+                nSat_fail: SAT_FAIL,
                 failure: 'FALSE'
                 //giveFlag: giveFlag
             });
